@@ -7,29 +7,20 @@
             <form @submit.prevent="submitForm">
                 <div class="form-group">
                     <label for="name">{{ $t('form.parentFullName') }}:</label>
-                    <input type="text" id="name" v-model="form.name" required />
+                    <input type="text" id="name" v-model="form.parentFullName" required />
                 </div>
                 <div class="form-group">
                     <label for="email">{{ $t('form.parentEmail') }}:</label>
-                    <input type="email" id="email" v-model="form.email" required />
+                    <input type="email" id="email" v-model="form.parentEmail" required />
                 </div>
                 <div class="form-group">
                     <label for="phone">{{ $t('form.parentPhoneNumber') }}:</label>
-                    <input type="tel" id="phone" v-model="form.phone" required />
+                    <input type="tel" id="phone" v-model="form.parentPhone" required />
                 </div>
                 <div class="form-group">
                     <label for="kidsAge">{{ $t('form.kidsAge') }}:</label>
                     <input type="number" id="kidsAge" v-model="form.kidsAge" min="1" required />
                 </div>
-                <!-- <div class="form-group">
-                        <label for="course">{{ $t('form.course') }}:</label>
-                        <select id="course" v-model="form.course" required>
-                            <option value="" disabled>{{ $t('form.selectCourse') }}</option>
-                            <option value="women">{{ $t('form.womenCourse') }}</option>
-                            <option value="kids">{{ $t('form.kidsCourse') }}</option>
-                            <option value="business">{{ $t('form.businessCourse') }}</option>
-                        </select>
-                    </div> -->
                 <div class="form-group subscribe-group">
                     <input type="checkbox" id="subscribe" v-model="form.isSubscribe" />
                     <label for="subscribe">{{ $t('form.subscribe') }}</label>
@@ -41,6 +32,8 @@
 </template>
 
 <script>
+import { siteService } from '@/services/site.service.js'
+
 export default {
     props: {
         open: {
@@ -50,38 +43,37 @@ export default {
     },
     data() {
         return {
-            form: {
+            form: this.getInitialFormState()
+        }
+    },
+    methods: {
+        getInitialFormState() {
+            return {
                 parentFullName: '',
                 parentEmail: '',
                 parentPhone: '',
                 kidsAge: '',
                 isSubscribe: false,
-            },
+            }
+        },
+        async submitForm() {
+            try {
+                await siteService.submitForm(this.form) // Submit the form data via siteService
+                alert('Form submitted successfully!')
+                this.resetForm() // Reset the form after submission
+                this.$emit('close') // Close the modal
+            } catch (error) {
+                alert('Failed to submit form. Please try again.')
+            }
+        },
+        closeModal() {
+            this.resetForm() // Reset the form when the modal is closed
+            this.$emit('close') // Emit an event to close the modal
+        },
+        resetForm() {
+            this.form = this.getInitialFormState() // Reset the form data
         }
     },
-   methods: {
-    async submitForm() {
-      const formData = new FormData();
-      formData.append('entry.1564799628', this.form.parentFullName); // Replace with your actual entry ID for Name
-      formData.append('entry.1636229087', this.form.parentEmail); // Replace with your actual entry ID for Email
-      formData.append('entry.250051217', this.form.parentPhone); // Replace with your actual entry ID for Phone
-      formData.append('entry.427496753', this.form.kidsAge); // Replace with your actual entry ID for Kid's Age
-      formData.append('entry.255221397', this.form.isSubscribe ? 'Yes' : 'No'); // Replace with your actual entry ID for Subscribe
-
-      try {
-        await axios.post('https://docs.google.com/forms/d/e/your-google-form-id/formResponse', formData);
-        alert('Form submitted successfully!');
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        alert('There was an error submitting the form.');
-      }
-
-      this.$emit('close'); // Emit an event to close the modal
-    },
-    closeModal() {
-      this.$emit('close'); // Emit an event to close the modal
-    },
-  },
 }
 </script>
 
