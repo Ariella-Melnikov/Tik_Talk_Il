@@ -1,0 +1,68 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui;
+}
+
+body[dir='rtl'] {
+  text-align: right;
+  direction: rtl;
+}
+
+body[dir='ltr'] {
+  text-align: left;
+  direction: ltr;
+}
+
+h1, h2, h3, h4, p {
+  padding: 0;
+  margin: 0;
+  font-weight: 300;
+}
+
+a {
+  text-decoration: none;
+  font-size: .9em;
+}
+
+.action-button {
+  background: linear-gradient(45deg, #548cc0, #4c3777);
+  color: #ffffff;
+  padding: 0.75rem 1.75rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+
+  &:before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: rgba(255, 255, 255, 0.15);
+      transition: all 0.5s ease;
+      border-radius: 50%;
+      z-index: -1;
+      transform: translate(-50%, -50%) scale(0);
+  }
+
+  &:hover {
+      background: linear-gradient(45deg, #4c3777, #548cc0);
+      transform: translateY(-2px);
+      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  &:hover:before {
+      transform: translate(-50%, -50%) scale(1);
+  }
+}
