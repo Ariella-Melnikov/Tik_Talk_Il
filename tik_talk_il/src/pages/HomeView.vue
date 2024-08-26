@@ -10,14 +10,23 @@
         </div>
 
         <kidsClassForm :open="isModalOpen" @close="closeModal" />
+<div class="content-container">
+          <img src="@/assets/img/women.png" alt="girl" class="home-image" />
+        <EnglishQuiz />
+
+</div>
+
     </section>
 </template>
 
 <script>
 import kidsClassForm from '@/cmps/kidsClassForm.vue'
+import EnglishQuiz from '@/cmps/EnglishQuiz.vue'
+
 export default {
     components: {
         kidsClassForm,
+        EnglishQuiz,
     },
     data() {
         return {
@@ -50,7 +59,7 @@ export default {
     gap: 5rem;
     max-width: 1600px;
     width: 100%;
-    margin: 0 auto;
+    margin: 0 auto 5rem auto;
 }
 
 .home-image {
