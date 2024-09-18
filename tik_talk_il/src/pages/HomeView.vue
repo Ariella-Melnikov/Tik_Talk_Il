@@ -10,12 +10,10 @@
         </div>
 
         <kidsClassForm :open="isModalOpen" @close="closeModal" />
-<div class="content-container">
-          <img src="@/assets/img/women.png" alt="girl" class="home-image" />
-        <EnglishQuiz />
-
-</div>
-
+        <div class="content-container">
+            <img src="@/assets/img/women.png" alt="girl" class="home-image" />
+            <EnglishQuiz />
+        </div>
     </section>
 </template>
 
@@ -56,20 +54,24 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    gap: 5rem;
+    gap: 15rem;
     max-width: 1600px;
     width: 100%;
-    margin: 0 auto 5rem auto;
+    margin: 0 auto 0 auto;
 }
 
 .home-image {
     width: 100%;
     height: auto;
     border-radius: 10px;
+    align-self: end; /* Align the image at the end */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove any margin */
 }
 
 .text-content {
     text-align: start;
+    padding-right: 2rem;
 }
 
 h2 {
