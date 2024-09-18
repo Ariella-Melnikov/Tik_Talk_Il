@@ -37,6 +37,6 @@ export default {
 <style>
 main {
     min-height: calc(90vh - 1rem);
-    padding: 0.5em;
+    padding: 0;
 }
 </style>

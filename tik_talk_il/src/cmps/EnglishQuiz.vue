@@ -1,8 +1,8 @@
 <template>
   <div class="english-quiz">
     <h2>{{ $t('quiz.title') }}</h2>
-    
-    <QuestionList @quiz-completed="handleQuizCompleted" />
+
+    <QuestionList @quiz-completed="handleQuizCompleted"  @open-modal="openModal" />
     
     <!-- Modal Trigger Button -->
     <div v-if="quizCompleted" class="modal-trigger">

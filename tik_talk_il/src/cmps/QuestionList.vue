@@ -61,7 +61,7 @@ export default {
       this.quizCompleted = true;
     },
     startCourse() {
-      this.$router.push('/adult-course-signup');
+      this.$emit('open-modal');
     },
   },
 };

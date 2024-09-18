@@ -56,8 +56,8 @@ const messages = {
         about: 'אודות'
     },
     home: {
-        heading: 'שיעורי אנגלית בקבוצות- ללמוד ביחד דרך חוויות',
-        description: 'שיעורים קבוצתיים מקוונים לילדים, בעזרת למידה חווייתית',
+        heading: 'שיעורי אנגלית בקבוצות בזום- ללמוד אנגלית מתוך משחקים, שירים והפעלות',
+        description: 'שיעורים קבוצתיים מקוונים לילדים, בעזרת למידה חווייתית, פעם בשבוע 45 דקת גילאי יסודי',
         actionButton: 'לתיאום שיעורי ניסיון'
       },
       form: {
@@ -80,9 +80,9 @@ const messages = {
         email: 'כתובת אימייל',
         phoneNumber: 'מספר טלפון',
         courseType: 'סוג הקורס',
-        selectCourseType: 'בחר סוג קורס',
-        businessCourse: 'אנגלית עסקית',
-        conversationalCourse: 'אנגלית שיחה',
+        selectCourseType: 'אני מתעניינת בקורס מסוג  ',
+        businessCourse: 'הכנה לראיונות',
+        conversationalCourse: 'שיפור יכולות שיחה באנגלית',
         academicCourse: 'אנגלית אקדמאית',
       },
       quiz: {
