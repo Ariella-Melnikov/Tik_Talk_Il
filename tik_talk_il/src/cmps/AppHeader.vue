@@ -15,12 +15,11 @@
 <script>
 import whiteLogo from '@/assets/img/logo/tik_talk_logo_white.png'
 import emptyLogo from '@/assets/img/logo/tik_talk_logo_empty.png'
-import background from '@/assets/img/header_background.png'
 
 export default {
     data() {
         return {
-            isScrolled: false, // Track whether the header is scrolled
+            isScrolled: false,
             logoSrc: whiteLogo,
         }
     },
@@ -31,22 +30,20 @@ export default {
         handleScroll() {
             const scrollPosition = window.scrollY
 
-            // If scroll position is greater than 0, mark header as scrolled
             if (scrollPosition > 0) {
                 this.isScrolled = true
-                this.logoSrc = emptyLogo // Switch to sticky logo
+                this.logoSrc = emptyLogo
             } else {
-                // If at top of page, switch back to white logo
                 this.isScrolled = false
-                this.logoSrc = whiteLogo // Switch back to default logo
+                this.logoSrc = whiteLogo
             }
         },
     },
     mounted() {
-        window.addEventListener('scroll', this.handleScroll) // Attach scroll event listener
+        window.addEventListener('scroll', this.handleScroll)
     },
     beforeDestroy() {
-        window.removeEventListener('scroll', this.handleScroll) // Clean up event listener
+        window.removeEventListener('scroll', this.handleScroll)
     },
 }
 </script>
@@ -63,15 +60,15 @@ header {
     z-index: 1000;
 
     padding: 10px;
-    background-image: url('@/assets/img/header_background.png'); /* Set background image */
-    background-size: cover; /* Ensure the background covers the entire header */
-    background-position: center; /* Center the background image */
-    background-repeat: no-repeat; /* Avoid background repetition */
+    background-image: url('@/assets/img/header_background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     transition: background-color 0.3s ease;
 
     &.scrolled {
-        background-color: #faf9ef; /* New background when sticky */
-        background-image: none; /* Optionally remove background image when scrolled */
+        background-color: #faf9ef;
+        background-image: none;
     }
 
     nav {
@@ -82,6 +79,45 @@ header {
     .logo {
         height: 10rem; /* Adjust the size of the logo */
         transition: opacity 0.3s ease; /* Optional: smooth logo transition */
+    }
+    .language-switcher {
+        background: linear-gradient(45deg, #ffd577, #dc8d7c, #af7b8c, );
+        color: #ffffff; /* White text color */
+        padding: 0.5rem 1.5rem; /* Adjusted padding for smaller size */
+        border: none; /* Remove borders */
+        border-radius: 50px; /* Rounded button */
+        cursor: pointer;
+        font-size: 1rem; /* Slightly smaller font size than the action button */
+        font-weight: bold; /* Bold text */
+        transition: all 0.3s ease; /* Smooth transitions */
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+
+        &:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.15); /* Subtle white glow */
+            transition: all 0.5s ease;
+            border-radius: 50%;
+            z-index: -1;
+            transform: translate(-50%, -50%) scale(0); /* Initial hidden state */
+        }
+
+        &:hover {
+            background: linear-gradient(45deg, #af7b8c, #dc8d7c, #ffd577); /* Reverse gradient on hover */
+            transform: translateY(-2px); /* Lift button slightly */
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15); /* More pronounced shadow on hover */
+        }
+
+        &:hover:before {
+            transform: translate(-50%, -50%) scale(1); /* Animate glow on hover */
+        }
     }
 }
 </style>
