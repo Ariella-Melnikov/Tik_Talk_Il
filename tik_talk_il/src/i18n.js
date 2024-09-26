@@ -6,7 +6,10 @@ const messages = {
     header: {
         title: 'Tik Talk - Make English Easy',
         home: 'Home',
-        about: 'About'
+        about: 'About',
+        admin: 'Admin',
+        login: 'Login',
+        logout: 'Logout',
     },
     home: {
         heading: 'English Group Lessons - Learn Together Through Experiences',
@@ -53,7 +56,10 @@ const messages = {
     header: {
         title: 'טיק טוק - ללמוד אנגלית בקלות',
         home: 'בית',
-        about: 'אודות'
+        about: 'אודות',
+        admin: 'מנהל אתר',
+        login: 'התחבר',
+        logout: 'התנתק',
     },
     home: {
         heading: 'שיעורי אנגלית בקבוצות בזום- ללמוד אנגלית מתוך משחקים, שירים והפעלות',

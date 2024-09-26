@@ -5,9 +5,12 @@
         <nav>
             <RouterLink to="/">{{ $t('header.home') }}</RouterLink>
             <RouterLink to="/about">{{ $t('header.about') }}</RouterLink>
+            <RouterLink v-if="isAdminLoggedIn" to="/admin">{{ $t('header.admin') }}</RouterLink>
             <button @click="toggleLanguage" class="language-switcher">
                 {{ $i18n.locale === 'he' ? 'English' : 'עברית' }}
             </button>
+            <RouterLink v-if="!isAdminLoggedIn" to="/auth">{{ $t('header.login') }}</RouterLink>
+            <button v-if="isAdminLoggedIn" @click="logout" class="logout-button">{{ $t('header.logout') }}</button>
         </nav>
     </header>
 </template>
@@ -15,12 +18,14 @@
 <script>
 import whiteLogo from '@/assets/img/logo/tik_talk_logo_white.png'
 import emptyLogo from '@/assets/img/logo/tik_talk_logo_empty.png'
+import { storageService } from '@/services/storage.service.js'
 
 export default {
     data() {
         return {
             isScrolled: false,
             logoSrc: whiteLogo,
+            isAdminLoggedIn: false,
         }
     },
     methods: {
@@ -38,9 +43,21 @@ export default {
                 this.logoSrc = whiteLogo
             }
         },
+        loginAdmin() {
+            this.isAdminLoggedIn = true
+        },
+        logout() {
+            this.isAdminLoggedIn = false
+            storageService.save('isAdminLoggedIn', false) // Remove login status
+            alert('Logged out successfully')
+        },
+        checkLoginStatus() {
+            this.isAdminLoggedIn = storageService.load('isAdminLoggedIn') === true
+        },
     },
     mounted() {
-        window.addEventListener('scroll', this.handleScroll)
+        window.addEventListener('scroll', this.handleScroll), 
+        this.checkLoginStatus() // Check login status on page load
     },
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll)
@@ -81,7 +98,7 @@ header {
         transition: opacity 0.3s ease; /* Optional: smooth logo transition */
     }
     .language-switcher {
-        background: linear-gradient(45deg, #ffd577, #dc8d7c, #af7b8c, );
+        background: linear-gradient(45deg, #ffd577, #dc8d7c, #af7b8c);
         color: #ffffff; /* White text color */
         padding: 0.5rem 1.5rem; /* Adjusted padding for smaller size */
         border: none; /* Remove borders */

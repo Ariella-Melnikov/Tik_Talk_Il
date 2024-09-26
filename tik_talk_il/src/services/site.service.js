@@ -4,15 +4,16 @@ const FORM_KEY = 'formSubmissions'; // Use this key for local storage or to iden
 
 export const siteService = {
     submitForm,
+    getSubmissions, 
 };
 
+let submissions = [];
+
 async function submitForm(formData) {
-    try {
-        // This assumes you're using a remote service. Switch to dbService for local storage.
-        const savedForm = await remoteService.submitToGoogleForm(formData);
-        return savedForm;
-    } catch (error) {
-        console.error('Failed to submit form:', error);
-        throw error;
-    }
+    submissions.push(formData); // Store form data in memory
+    return Promise.resolve();
+}
+
+async function getSubmissions() {
+    return Promise.resolve(submissions); // Return stored submissions
 }
