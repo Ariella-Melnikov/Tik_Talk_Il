@@ -63,7 +63,7 @@ export default {
         },
         async submitForm() {
             try {
-                await siteService.submitForm(this.form) // Submit the form data via siteService
+                await siteService.submitAdultForm(this.form) // Submit the form data via siteService
                 alert('Form submitted successfully!')
                 this.resetForm() // Reset the form after submission
                 this.$emit('close') // Close the modal

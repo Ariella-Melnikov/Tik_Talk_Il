@@ -51,6 +51,19 @@ const messages = {
         startCourse: 'Sign Up Now',
         signUpForCourse: 'Sign Up for Adult Courses',
       },
+      table: {
+        adultheader: 'Adult Form Submissions',
+        kidsheader: 'Kids Form Submissions',
+        fullname: 'Full Name',
+        email: 'Email',
+        phone: 'Phone Number',
+        course: 'Course Type',
+        subscribed: 'Subscribed',
+        parentname: 'Parent Full Name',
+        parentemail: 'Parent Email',
+        parentphone: 'Parent Phone Number',
+        kidsage: 'Child’s Age',
+      },
   },
   he: {
     header: {
@@ -100,6 +113,19 @@ const messages = {
         lowScoreMessage: 'נראה שתוכל להפיק תועלת מעזרה. הירשם לקורסי המבוגרים שלנו!',
         startCourse: 'הירשם עכשיו',
         signUpForCourse: 'הירשם לקורסי מבוגרים',
+      },
+      table: {
+        adultheader: ' פרטי טפסים בוגרים',
+        kidsheader: 'פרטי טפסים ילדים',
+        fullname: 'שם מלא',
+        email: 'אימייל',
+        phone: 'מספר טלפון',
+        course: 'סוג קורס',
+        subscribed: 'רישום לניוזלטר',
+        parentname: 'שם מלא של ההורה',
+        parentemail: 'אימייל של ההורה',
+        parentphone: 'טלפון של ההורה',
+        kidsage: 'גיל הילד/ה',
       },
   }
 };
