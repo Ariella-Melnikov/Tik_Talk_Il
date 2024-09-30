@@ -16,7 +16,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(submission, index) in adultSubmissions" :key="index">
+                <tr
+                    v-for="(submission, index) in adultSubmissions"
+                    :key="index"
+                    :class="{ 'read-row': submission.isRead }">
                     <td>{{ submission.fullName }}</td>
                     <td>{{ submission.email }}</td>
                     <td>{{ submission.phone }}</td>
@@ -25,7 +28,9 @@
                     <td>
                         <button @click="openEditModal(submission, 'adult')">Edit</button>
                         <button @click="deleteSubmission(submission._id, 'adult')">Delete</button>
-                        <button @click="markAsRead(submission._id)" v-if="!submission.isRead">Mark as Read</button>
+                        <button @click="toggleReadStatus(submission._id, 'adult')">
+                            {{ submission.isRead ? 'Mark as Unread' : 'Mark as Read' }}
+                        </button>
                     </td>
                 </tr>
             </tbody>
@@ -46,7 +51,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(submission, index) in kidsSubmissions" :key="index">
+                <tr
+                    v-for="(submission, index) in kidsSubmissions"
+                    :key="index"
+                    :class="{ 'read-row': submission.isRead }">
                     <td>{{ submission.parentFullName }}</td>
                     <td>{{ submission.parentEmail }}</td>
                     <td>{{ submission.parentPhone }}</td>
@@ -55,7 +63,9 @@
                     <td>
                         <button @click="openEditModal(submission, 'kids')">Edit</button>
                         <button @click="deleteSubmission(submission._id, 'kids')">Delete</button>
-                        <button @click="markAsRead(submission._id)" v-if="!submission.isRead">Mark as Read</button>
+                        <button @click="toggleReadStatus(submission._id, 'kids')">
+                            {{ submission.isRead ? 'Mark as Unread' : 'Mark as Read' }}
+                        </button>
                     </td>
                 </tr>
             </tbody>
@@ -100,6 +110,7 @@ export default {
             'loadKidsSubmissions',
             'saveSubmission',
             'deleteSubmission',
+            'toggleSubmissionReadStatus',
         ]), // Map actions from Vuex store
 
         async loadSubmissions() {
@@ -149,6 +160,14 @@ export default {
             await this.$store.dispatch('submissions/deleteSubmission', { submissionId, type })
             await this.loadSubmissions()
         },
+        // Mark a submission as read
+        async toggleReadStatus(submissionId, type) {
+            try {
+                await this.$store.dispatch('submissions/toggleSubmissionReadStatus', { submissionId, type })
+            } catch (err) {
+                console.error(`Failed to toggle read status for ${type} submission:`, err)
+            }
+        },
     },
 }
 </script>
@@ -175,8 +194,13 @@ th {
     background-color: #f4f4f4;
 }
 
-td {
+tr {
     background-color: #faf9ef;
+}
+
+/* Make the .read-row a standalone class, not nested under tr */
+.read-row {
+    background-color: #bde1f1 !important; /* Light blue color to indicate read status */
 }
 
 /* Modal Styles */
