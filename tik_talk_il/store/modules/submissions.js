@@ -71,11 +71,10 @@ export default {
       },
       async deleteSubmission({ commit }, { submissionId, type }) {
         try {
+          await siteService.remove(submissionId, type)
           if (type === 'adult') {
-            await siteService.deleteAdultSubmission(submissionId)
             commit('deleteAdultSubmission', submissionId)
           } else {
-            await siteService.deleteKidsSubmission(submissionId)
             commit('deleteKidsSubmission', submissionId)
           }
         } catch (err) {

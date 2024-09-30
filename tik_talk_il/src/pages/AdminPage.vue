@@ -147,7 +147,7 @@ export default {
         // Delete a submission
         async deleteSubmission(submissionId, type) {
             await this.$store.dispatch('submissions/deleteSubmission', { submissionId, type })
-            this.loadSubmissions()
+            await this.loadSubmissions()
         },
     },
 }

@@ -65,19 +65,19 @@ export const siteService = {
   }
   
   // Get a specific submission by ID from the respective storage
-  async function getById(submissionId, type = 'adult') {
+  async function getById(submissionId, type ) {
     const storageKey = type === 'adult' ? ADULT_STORAGE_KEY : KIDS_STORAGE_KEY
     return storageService.get(storageKey, submissionId)
   }
   
   // Remove a submission by ID
-  async function remove(submissionId, type) {
+  async function remove(submissionId, type ) {
     const storageKey = type === 'adult' ? ADULT_STORAGE_KEY : KIDS_STORAGE_KEY
     await storageService.remove(storageKey, submissionId)
   }
   
   // Save a submission (add new or update existing) based on type (adult or kids)
-  async function save(submission, type = 'adult') {
+  async function save(submission, type ) {
     const storageKey = type === 'adult' ? ADULT_STORAGE_KEY : KIDS_STORAGE_KEY
     let savedSubmission
   
@@ -101,7 +101,7 @@ export const siteService = {
   }
   
   // Manually add a new submission (to simulate adding without form submission)
-  async function addSubmissionManually(submissionData, type = 'adult') {
+  async function addSubmissionManually(submissionData, type) {
     const storageKey = type === 'adult' ? ADULT_STORAGE_KEY : KIDS_STORAGE_KEY
     const newSubmission = {
       _id: utilService.makeId(),
@@ -123,7 +123,7 @@ export const siteService = {
   }
   
   // Provide an empty submission template for both adult and kids submissions
-  function getEmptySubmission(type = 'adult') {
+  function getEmptySubmission(type) {
     return type === 'adult'
       ? { fullName: '', email: '', phone: '', courseType: '', isSubscribe: false, isRead: false }
       : { parentFullName: '', parentEmail: '', parentPhone: '', kidsAge: '', isSubscribe: false, isRead: false }
