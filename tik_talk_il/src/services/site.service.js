@@ -1,31 +1,130 @@
-import { remoteService } from './remote.service.js'; // Or './db.service.js' if using local storage
+import { remoteService } from './remote.service.js';
+import { storageService } from './async-storage.service.js';
+import { utilService } from './util.service.js';
 
-const FORM_KEY = 'formSubmissions'; // Use this key for local storage or to identify the collection in the backend
+const ADULT_STORAGE_KEY = 'adult_submissions'
+const KIDS_STORAGE_KEY = 'kids_submissions'
 
 export const siteService = {
     submitAdultForm,
     submitKidsForm,
     getAdultSubmissions,
-    getKidsSubmissions, 
-};
-
-let adultSubmissions = [];
-let kidsSubmissions = [];
-
-async function submitAdultForm(formData) {
-    adultSubmissions.push(formData); // Store form data in the adult submissions array
-    return Promise.resolve();
-}
-
-async function submitKidsForm(formData) {
-    kidsSubmissions.push(formData); // Store form data in the kids submissions array
-    return Promise.resolve();
-}
-
-async function getAdultSubmissions() {
-    return Promise.resolve(adultSubmissions); // Return adult submissions
-}
-
-async function getKidsSubmissions() {
-    return Promise.resolve(kidsSubmissions); // Return kids submissions
-}
+    getKidsSubmissions,
+    getSubmissions,
+    getById,
+    remove,
+    save,
+    addSubmissionManually,
+    getEmptySubmission,
+  }
+  
+  // Manually keep in-memory arrays for quicker access
+  let adultSubmissions = []
+  let kidsSubmissions = []
+  
+  // Submit adult form data
+  async function submitAdultForm(formData) {
+    // Save the form data to the storage service
+    await storageService.post(ADULT_STORAGE_KEY, formData)
+    adultSubmissions.push(formData) // Update the in-memory array
+    return Promise.resolve()
+  }
+  
+  // Submit kids form data
+  async function submitKidsForm(formData) {
+    await storageService.post(KIDS_STORAGE_KEY, formData)
+    kidsSubmissions.push(formData)
+    return Promise.resolve()
+  }
+  
+  // Get adult submissions from local storage and update in-memory array
+  async function getAdultSubmissions() {
+    adultSubmissions = await storageService.query(ADULT_STORAGE_KEY)
+    return Promise.resolve(adultSubmissions)
+  }
+  
+  // Get kids submissions from local storage and update in-memory array
+  async function getKidsSubmissions() {
+    kidsSubmissions = await storageService.query(KIDS_STORAGE_KEY)
+    return Promise.resolve(kidsSubmissions)
+  }
+  
+  // Get submissions (both adult and kids) based on filterBy criteria
+  async function getSubmissions(filterBy = { term: '' }) {
+    let adultResults = await storageService.query(ADULT_STORAGE_KEY)
+    let kidsResults = await storageService.query(KIDS_STORAGE_KEY)
+  
+    const { term } = filterBy
+    if (term) {
+      const regex = new RegExp(term, 'i')
+      adultResults = adultResults.filter(submission => regex.test(submission.fullName))
+      kidsResults = kidsResults.filter(submission => regex.test(submission.parentFullName))
+    }
+  
+    return [...adultResults, ...kidsResults] // Return combined results
+  }
+  
+  // Get a specific submission by ID from the respective storage
+  async function getById(submissionId, type = 'adult') {
+    const storageKey = type === 'adult' ? ADULT_STORAGE_KEY : KIDS_STORAGE_KEY
+    return storageService.get(storageKey, submissionId)
+  }
+  
+  // Remove a submission by ID
+  async function remove(submissionId, type) {
+    const storageKey = type === 'adult' ? ADULT_STORAGE_KEY : KIDS_STORAGE_KEY
+    await storageService.remove(storageKey, submissionId)
+  }
+  
+  // Save a submission (add new or update existing) based on type (adult or kids)
+  async function save(submission, type = 'adult') {
+    const storageKey = type === 'adult' ? ADULT_STORAGE_KEY : KIDS_STORAGE_KEY
+    let savedSubmission
+  
+    if (submission._id) {
+      // Update existing submission
+      savedSubmission = await storageService.put(storageKey, submission)
+    } else {
+      // Add new submission
+      submission._id = utilService.makeId() // Create a unique ID for the submission
+      savedSubmission = await storageService.post(storageKey, submission)
+    }
+  
+    // Update in-memory arrays based on the type
+    if (type === 'adult') {
+      adultSubmissions = await storageService.query(ADULT_STORAGE_KEY)
+    } else {
+      kidsSubmissions = await storageService.query(KIDS_STORAGE_KEY)
+    }
+  
+    return savedSubmission
+  }
+  
+  // Manually add a new submission (to simulate adding without form submission)
+  async function addSubmissionManually(submissionData, type = 'adult') {
+    const storageKey = type === 'adult' ? ADULT_STORAGE_KEY : KIDS_STORAGE_KEY
+    const newSubmission = {
+      _id: utilService.makeId(),
+      ...submissionData,
+      isSubscribe: false,
+      isRead: false,
+    }
+  
+    const savedSubmission = await storageService.post(storageKey, newSubmission)
+  
+    // Update the in-memory arrays based on the type
+    if (type === 'adult') {
+      adultSubmissions.push(savedSubmission)
+    } else {
+      kidsSubmissions.push(savedSubmission)
+    }
+  
+    return savedSubmission
+  }
+  
+  // Provide an empty submission template for both adult and kids submissions
+  function getEmptySubmission(type = 'adult') {
+    return type === 'adult'
+      ? { fullName: '', email: '', phone: '', courseType: '', isSubscribe: false, isRead: false }
+      : { parentFullName: '', parentEmail: '', parentPhone: '', kidsAge: '', isSubscribe: false, isRead: false }
+  }
