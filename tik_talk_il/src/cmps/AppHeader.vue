@@ -3,14 +3,16 @@
         <img :src="logoSrc" alt="Logo" class="logo" />
         <!-- <h1>{{ $t('header.title') }}</h1> -->
         <nav>
-            <RouterLink to="/">{{ $t('header.home') }}</RouterLink>
-            <RouterLink to="/about">{{ $t('header.about') }}</RouterLink>
-            <RouterLink v-if="isAdminLoggedIn" to="/admin">{{ $t('header.admin') }}</RouterLink>
+            <RouterLink to="/" class="router-link">{{ $t('header.home') }}</RouterLink>
+            <RouterLink to="/about" class="router-link">{{ $t('header.about') }}</RouterLink>
+            <RouterLink v-if="isAdminLoggedIn" to="/admin" class="router-link">{{ $t('header.admin') }}</RouterLink>
+            <RouterLink v-if="!isAdminLoggedIn" to="/auth" class="router-link">{{ $t('header.login') }}</RouterLink>
+            <button v-if="isAdminLoggedIn" @click="logout" class="router-link logout-button">
+                {{ $t('header.logout') }}
+            </button>
             <button @click="toggleLanguage" class="language-switcher">
                 {{ $i18n.locale === 'he' ? 'English' : 'עברית' }}
             </button>
-            <RouterLink v-if="!isAdminLoggedIn" to="/auth">{{ $t('header.login') }}</RouterLink>
-            <button v-if="isAdminLoggedIn" @click="logout" class="logout-button">{{ $t('header.logout') }}</button>
         </nav>
     </header>
 </template>
@@ -56,8 +58,7 @@ export default {
         },
     },
     mounted() {
-        window.addEventListener('scroll', this.handleScroll), 
-        this.checkLoginStatus() // Check login status on page load
+        window.addEventListener('scroll', this.handleScroll), this.checkLoginStatus() // Check login status on page load
     },
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll)
@@ -90,7 +91,8 @@ header {
 
     nav {
         display: flex;
-        gap: 1em;
+        gap: 1.5rem;
+        align-items: stretch;
     }
 
     .logo {
@@ -135,6 +137,43 @@ header {
         &:hover:before {
             transform: translate(-50%, -50%) scale(1); /* Animate glow on hover */
         }
+    }
+    .router-link {
+        display: flex; /* Make the RouterLink a flex container */
+        align-items: stretch; /* Center text vertically */
+        justify-content: center; /* Center text horizontally */
+        height: 100%; /* Take up the full height of the parent */
+        padding: 0.5rem 1.5rem; /* Add some padding */
+        color: #4c3777; /* Default text color */
+        text-decoration: none; /* Remove underline */
+        border: none; /* Remove border */
+        background: transparent; /* Remove background */
+        transition: all 0.3s ease; /* Smooth transition */
+        font-size: 1.1rem;
+        cursor: pointer;
+
+        &:hover {
+            box-shadow: inset 0 -4px 0 0 #4c3777;
+            background: rgba(255, 255, 255, 0.2); /* Add a slight background color on hover */
+            border-radius: 0; 
+        }
+
+        &.router-link-active {
+            font-weight: bold;
+            border-bottom: 2px solid #4c3777; /* Highlight the active link */
+        }
+    }
+
+    .language-switcher,
+    .logout-button {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .language-switcher {
+        margin-left: 1rem;
     }
 }
 </style>

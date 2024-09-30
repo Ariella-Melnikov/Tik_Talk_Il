@@ -64,6 +64,20 @@ const messages = {
         parentphone: 'Parent Phone Number',
         kidsage: 'Child’s Age',
       },
+      actions: {
+        edit: "Edit",
+        delete: "Delete",
+        markAsRead: "Mark as Read",
+        markAsUnread: "Mark as Unread",
+        addNewAdultSubmission: "Add New Adult Submission",
+        addNewKidsSubmission: "Add New Kids Submission"
+    },
+    editSubmissions: {
+      editTitle: "Edit Submission",
+      addTitle: "Add New Submission",
+      saveChanges: "Save Changes",
+      addSubmission: "Add Submission",
+    },
   },
   he: {
     header: {
@@ -127,6 +141,20 @@ const messages = {
         parentphone: 'טלפון של ההורה',
         kidsage: 'גיל הילד/ה',
       },
+      actions: {
+        edit: "עריכה",
+        delete: "מחיקה",
+        markAsRead: "סמן כטופל",
+        markAsUnread: "סמן כלא טופל",
+        addNewAdultSubmission: "הוספת טופס בוגר חדש",
+        addNewKidsSubmission: "הוספת טופס ילדים חדש",
+    },
+    editSubmissions: {
+      editTitle: "עריכת טופס",
+      addTitle: "הוספת טופס חדש",
+      saveChanges: "שמור שינויים",
+      addSubmission: "הוסף טופס",
+    },
   }
 };
 

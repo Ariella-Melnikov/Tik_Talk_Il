@@ -12,7 +12,7 @@
                     <th>{{ $t('table.phone') }}</th>
                     <th>{{ $t('table.course') }}</th>
                     <th>{{ $t('table.subscribed') }}</th>
-                    <th>Actions</th>
+                    <th>{{ $t('table.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,16 +26,16 @@
                     <td>{{ submission.courseType }}</td>
                     <td>{{ submission.isSubscribe ? 'Yes' : 'No' }}</td>
                     <td>
-                        <button @click="openEditModal(submission, 'adult')">Edit</button>
-                        <button @click="deleteSubmission(submission._id, 'adult')">Delete</button>
-                        <button @click="toggleReadStatus(submission._id, 'adult')">
-                            {{ submission.isRead ? 'Mark as Unread' : 'Mark as Read' }}
+                        <button @click="openEditModal(submission, 'adult')" class = "edit-button">{{ $t('actions.edit') }}</button>
+                        <button @click="deleteSubmission(submission._id, 'adult')" class = "delete-button">{{ $t('actions.delete') }}</button>
+                        <button @click="toggleReadStatus(submission._id, 'adult')" class = "mark-button">
+                            {{ submission.isRead ?  $t('actions.markAsUnread') : $t('actions.markAsRead') }}
                         </button>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <button @click="openAddModal('adult')">Add New Adult Submission</button>
+        <button @click="openAddModal('adult')" class = "add-button">{{ $t('actions.addNewAdultSubmission') }}</button>
 
         <!-- Kids Submissions Table -->
         <h2>{{ $t('table.kidsheader') }}</h2>
@@ -47,7 +47,7 @@
                     <th>{{ $t('table.parentphone') }}</th>
                     <th>{{ $t('table.kidsage') }}</th>
                     <th>{{ $t('table.subscribed') }}</th>
-                    <th>Actions</th>
+                    <th>{{ $t('table.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,16 +61,16 @@
                     <td>{{ submission.kidsAge }}</td>
                     <td>{{ submission.isSubscribe ? 'Yes' : 'No' }}</td>
                     <td>
-                        <button @click="openEditModal(submission, 'kids')">Edit</button>
-                        <button @click="deleteSubmission(submission._id, 'kids')">Delete</button>
-                        <button @click="toggleReadStatus(submission._id, 'kids')">
-                            {{ submission.isRead ? 'Mark as Unread' : 'Mark as Read' }}
+                        <button @click="openEditModal(submission, 'kids')" class = "edit-button">{{ $t('actions.edit') }}</button>
+                        <button @click="deleteSubmission(submission._id, 'kids')" class = "delete-button">{{ $t('actions.delete') }}</button>
+                        <button @click="toggleReadStatus(submission._id, 'kids')" class = "mark-button">
+                            {{ submission.isRead ? $t('actions.markAsUnread') : $t('actions.markAsRead') }}
                         </button>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <button @click="openAddModal('kids')">Add New Kids Submission</button>
+        <button @click="openAddModal('kids')" class = "add-button">{{ $t('actions.addNewKidsSubmission') }}</button>
 
         <!-- Add/Edit Submission Modal -->
         <edit-submissions
@@ -177,30 +177,114 @@ export default {
     padding: 2rem;
 }
 
+  h1 {
+        text-align: center;
+        color: #4c3777;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    h2 {
+        color: #2d2a6c;
+        margin: 2rem 0 1rem;
+        font-size: 1.5rem;
+        text-transform: capitalize;
+        font-weight: 500;
+    }
+
+    .add-button {
+        display: inline-block;
+        margin: 1.5rem 0;
+        padding: 0.7rem 1.5rem;
+        background-color: #7a63a8;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: #2d2a6c;
+        }
+    }
+
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
-}
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
-th,
-td {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    text-align: left;
-}
+    th,
+    td {
+        border: 1px solid #ccc;
+        padding: 0.75rem;
+        text-align: left;
+    }
 
-th {
-    background-color: #f4f4f4;
-}
+    th {
+        background-color: #548cc0;
+        color: #ffffff;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
 
-tr {
-    background-color: #faf9ef;
+    tr {
+        background-color: #faf9ef;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: #f0f0f0;
+        }
+    }
 }
 
 /* Make the .read-row a standalone class, not nested under tr */
 .read-row {
     background-color: #bde1f1 !important; /* Light blue color to indicate read status */
+}
+
+button {
+    display: inline-block;
+    margin: 0.2rem 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #7a63a8;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #2d2a6c;
+    }
+
+    &.mark-button {
+        background-color: #4c3777;
+        &:hover {
+            background-color: #2d2a6c;
+        }
+    }
+
+    &.delete-button {
+        background-color: #c53939;
+        &:hover {
+            background-color: #9e2929;
+        }
+    }
+
+    &.edit-button {
+        background-color: #2d6c2d;
+        &:hover {
+            background-color: #1e4d1e;
+        }
+    }
 }
 
 /* Modal Styles */
@@ -214,5 +298,62 @@ tr {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.modal {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 500px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    h2 {
+        color: #4c3777;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+
+        label {
+            margin: 0.5rem 0;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+
+            &:focus {
+                outline: none;
+                border-color: #548cc0;
+                box-shadow: 0 0 4px rgba(84, 140, 192, 0.3);
+            }
+        }
+
+        button {
+            padding: 0.7rem 1.5rem;
+            background-color: #4c3777;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
+
+            &:hover {
+                background-color: #2d2a6c;
+            }
+        }
+    }
 }
 </style>
