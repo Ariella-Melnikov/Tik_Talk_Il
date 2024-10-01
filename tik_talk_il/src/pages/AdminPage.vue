@@ -224,7 +224,7 @@ table {
     td {
         border: 1px solid #ccc;
         padding: 0.75rem;
-        text-align: left;
+        text-align: center;
     }
 
     th {

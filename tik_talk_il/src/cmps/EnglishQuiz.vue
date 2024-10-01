@@ -48,7 +48,6 @@ export default {
 
 <style lang="scss">
 .english-quiz {
-  background-color: #faf9ef;
   padding: 2rem;
   border-radius: 10px;
   text-align: center;
