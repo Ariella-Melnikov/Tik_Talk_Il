@@ -1,25 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: system-ui;
+  font-family: 'Rubik', sans-serif; 
+  font-weight: 300; 
+  margin: 0;
 }
 
 body[dir='rtl'] {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 400;
   text-align: right;
   direction: rtl;
 }
 
 body[dir='ltr'] {
+  font-family: 'Rubik', sans-serif;
   text-align: left;
   direction: ltr;
 }
 
-h1, h2, h3, h4, p {
+h1, h2 {
+  padding: 0;
+  margin: 0;
+  font-weight: 400;
+}
+
+h3, h4, p {
   padding: 0;
   margin: 0;
   font-weight: 300;
+
 }
 
 a {
