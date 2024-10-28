@@ -94,6 +94,9 @@ const messages = {
       saveChanges: "Save Changes",
       addSubmission: "Add Submission",
     },
+    about: {
+      title: 'Speak English<br>Fluently'
+    },
   },
   he: {
     header: {
@@ -186,6 +189,9 @@ const messages = {
       addTitle: "הוספת טופס חדש",
       saveChanges: "שמור שינויים",
       addSubmission: "הוסף טופס",
+    },
+    about: {
+      title: 'לדבר אנגלית<br>באופן שוטף'
     },
   }
 };
