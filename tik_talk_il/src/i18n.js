@@ -10,6 +10,7 @@ const messages = {
         admin: 'Admin',
         login: 'Login',
         logout: 'Logout',
+        questionsManagement: 'Questions Management',
     },
     home: {
         heading: 'English Group Lessons - Learn Together Through Experiences',
@@ -89,6 +90,7 @@ const messages = {
         admin: 'מנהל אתר',
         login: 'התחבר',
         logout: 'התנתק',
+        questionsManagement: 'ניהול שאלות',
     },
     home: {
         heading: 'שיעורי אנגלית בקבוצות בזום- ללמוד אנגלית מתוך משחקים, שירים והפעלות',
