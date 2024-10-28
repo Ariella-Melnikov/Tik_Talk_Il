@@ -1,5 +1,5 @@
 <template>
-    <header ref="stickyHeader" :class="{ scrolled: isScrolled }">
+    <header ref="stickyHeader" :class="{ scrolled: isScrolled, aboutPage: isAboutPage }">
         <img :src="logoSrc" alt="Logo" class="logo" />
         <!-- <h1>{{ $t('header.title') }}</h1> -->
         <nav>
@@ -29,6 +29,11 @@ export default {
             logoSrc: whiteLogo,
             isAdminLoggedIn: false,
         }
+    },
+    computed: {
+        isAboutPage() {
+            return this.$route.path === '/about'
+        },
     },
     methods: {
         toggleLanguage() {
@@ -85,6 +90,19 @@ header {
     transition: background-color 0.3s ease;
 
     &.scrolled {
+        background-color: #faf9ef;
+        background-image: none;
+    }
+
+    &.aboutPage {
+        background-image: url('@/assets/img/header-about.png');
+        background-size: cover;
+        background-position: top;
+        background-repeat: no-repeat;
+        transition: background-color 0.3s ease;
+    }
+
+    &.aboutPage.scrolled {
         background-color: #faf9ef;
         background-image: none;
     }
@@ -155,7 +173,7 @@ header {
         &:hover {
             box-shadow: inset 0 -4px 0 0 #4c3777;
             background: rgba(255, 255, 255, 0.2); /* Add a slight background color on hover */
-            border-radius: 0; 
+            border-radius: 0;
         }
 
         &.router-link-active {
