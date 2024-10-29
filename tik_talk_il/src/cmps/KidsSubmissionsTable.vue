@@ -21,7 +21,7 @@
                     <td>{{ submission.isSubscribe ? 'Yes' : 'No' }}</td>
                     <td>
                         <button @click="openEditModal(submission)" class="edit-button">{{ $t('actions.edit') }}</button>
-                        <button @click="deleteSubmission(submission._id)" class="delete-button">{{ $t('actions.delete') }}</button>
+                        <button @click="handleDeleteSubmission(submission._id)" class="delete-button">{{ $t('actions.delete') }}</button>
                         <button @click="toggleReadStatus(submission._id)" class="mark-button">
                             {{ submission.isRead ? $t('actions.markAsUnread') : $t('actions.markAsRead') }}
                         </button>
@@ -48,7 +48,7 @@ export default {
         openAddModal() {
             this.$emit('add', 'kids');
         },
-        async deleteSubmission(submissionId) {
+        async handleDeleteSubmission(submissionId) {
             await this.deleteSubmission({ submissionId, type: 'kids' });
         },
         async toggleReadStatus(submissionId) {
