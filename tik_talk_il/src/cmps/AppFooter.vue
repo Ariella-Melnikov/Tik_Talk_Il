@@ -11,6 +11,13 @@
             <a href="https://www.linkedin.com/in/shoham-joseph-835b091b4/" target="_blank" rel="noopener noreferrer">
                 <font-awesome-icon :icon="['fab', 'linkedin']" class="social-icon" />
             </a>
+             <a href="https://www.facebook.com/share/7LXTQzSCCi1kAVza/?mibextid=kFxxJD" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'facebook']" class="social-icon" />
+            </a>
+
+            <a href="https://www.tiktok.com/@tik.talk.il?_t=8qwaKAbPdPL&_r=1" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'tiktok']" class="social-icon" />
+            </a>
         </div>
     </footer>
 </template>
