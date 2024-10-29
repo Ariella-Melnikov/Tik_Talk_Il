@@ -1,18 +1,19 @@
 <template>
     <section class="home-section">
-        <div class="content-container">
+        <div class="content-container kids-banner-container" :style="{ backgroundImage: `url(${kidsBannerImage})` }">
             <div class="text-content">
                 <h2>{{ $t('home.heading') }}</h2>
                 <p>{{ $t('home.description') }}</p>
                 <button @click="openModal" class="action-button">{{ $t('home.actionButton') }}</button>
             </div>
-            <img src="@/assets/img/girl1.png" alt="girl" class="home-image" />
         </div>
 
         <kidsClassForm :open="isModalOpen" @close="closeModal" />
-        <div class="content-container">
-            <img src="@/assets/img/women.png" alt="girl" class="home-image" />
-            <EnglishQuiz />
+        <div class="content-container quiz-banner-container" :style="{ backgroundImage: `url(${quizBannerImage})` }">
+            <div class="empty-conteiner"></div>
+            <div class="quiz-content">
+                <EnglishQuiz />
+            </div>
         </div>
     </section>
 </template>
@@ -29,9 +30,22 @@ export default {
     data() {
         return {
             isModalOpen: false,
+            kidsBannerImage: '',
+            quizBannerImage: '',
         }
     },
+    watch: {
+        '$i18n.locale': 'updateBannerImages', // Watch for language change to update images
+    },
+    mounted() {
+        this.updateBannerImages() // Initial load for the banner images
+    },
     methods: {
+        async updateBannerImages() {
+            // Dynamically import the images based on locale
+            this.kidsBannerImage = (await import(`@/assets/img/banners/kids-banner-${this.$i18n.locale}.png`)).default
+            this.quizBannerImage = (await import(`@/assets/img/banners/women-banner-${this.$i18n.locale}.png`)).default
+        },
         openModal() {
             this.isModalOpen = true
         },
@@ -55,23 +69,66 @@ export default {
     grid-template-columns: 1fr 1fr;
     align-items: center;
     gap: 15rem;
-    max-width: 1600px;
+    // max-width: 1600px;
     width: 100%;
-    margin: 0 auto 0 auto;
+    margin-block-end: 4rem;
+    padding: 2rem;
+
+    .empty-conteiner {
+        grid-column: 1; /* Ensure this is in the first column */
+    }
+
+    .quiz-content {
+        grid-column: 2; /* Ensure this is in the second column */
+    }
 }
 
-.home-image {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    align-self: end; /* Align the image at the end */
-    padding: 0; /* Remove padding */
-    margin: 0; /* Remove any margin */
+.kids-banner-container {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative; /* To allow overlay styling */
+
+    .text-content {
+        text-align: start;
+        padding-right: 2rem;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+    
 }
 
-.text-content {
-    text-align: start;
-    padding-right: 2rem;
+.quiz-banner-container {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+
+    /* Optional overlay */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    .quiz-content {
+        position: relative;
+        z-index: 1;
+        text-align: end;
+    }
 }
 
 h2 {
@@ -87,14 +144,11 @@ p {
     font-size: 1.5rem;
 }
 
-@media (max-width: 768px) {
-    .content-container {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-
-    .home-image {
-        margin-bottom: 1.5rem;
-    }
-}
+// @media (min-width: 1024px) {
+//     .quiz-banner-container {
+//         background-size: cover; /* Only cover for large screens */
+//         background-position: center;
+//         padding: 6rem 4rem; /* Adjust padding for larger screens */
+//     }
+// }
 </style>

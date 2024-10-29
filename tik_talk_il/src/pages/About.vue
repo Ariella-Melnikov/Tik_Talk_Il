@@ -23,7 +23,6 @@
             <p>{{ $t('about.whyChooseUsDescription') }}</p>
         </div>
 
-        <img src="@/assets/img/shoham-1.png" alt="Shoham" class="about-image" />
     </section>
 </template>
 
