@@ -8,9 +8,9 @@ import store from '../store'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faInstagram, faLinkedin, faFacebook, faTiktok } from '@fortawesome/free-brands-svg-icons'
+import { faInstagram, faLinkedin, faFacebook, faTiktok, faWhatsapp } from '@fortawesome/free-brands-svg-icons'
 
-library.add(faInstagram, faLinkedin, faFacebook, faTiktok)
+library.add(faInstagram, faLinkedin, faFacebook, faTiktok, faWhatsapp)
 
 
 const app = createApp(App)

@@ -2,16 +2,26 @@
     <footer>
         <div class="social-links">
             <h2 class="footer-text">TIK TALK Make English Easy</h2>
+            
+            <a href="https://wa.me/972528659990" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'whatsapp']" class="social-icon" />
+            </a>
+
             <a
                 href="https://www.instagram.com/_tik_talk_il_?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
                 target="_blank"
                 rel="noopener noreferrer">
                 <font-awesome-icon :icon="['fab', 'instagram']" class="social-icon" />
             </a>
+
             <a href="https://www.linkedin.com/in/shoham-joseph-835b091b4/" target="_blank" rel="noopener noreferrer">
                 <font-awesome-icon :icon="['fab', 'linkedin']" class="social-icon" />
             </a>
-             <a href="https://www.facebook.com/share/7LXTQzSCCi1kAVza/?mibextid=kFxxJD" target="_blank" rel="noopener noreferrer">
+
+            <a
+                href="https://www.facebook.com/share/7LXTQzSCCi1kAVza/?mibextid=kFxxJD"
+                target="_blank"
+                rel="noopener noreferrer">
                 <font-awesome-icon :icon="['fab', 'facebook']" class="social-icon" />
             </a>
 
