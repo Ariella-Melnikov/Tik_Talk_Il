@@ -1,11 +1,11 @@
-import { remoteService } from './remote.service.js';
-import { storageService } from './async-storage.service.js';
-import { utilService } from './util.service.js';
+import { remoteService } from '../remote.service.js';
+import { storageService } from '../async-storage.service.js';
+import { utilService } from '../util.service.js';
 
 const ADULT_STORAGE_KEY = 'adult_submissions'
 const KIDS_STORAGE_KEY = 'kids_submissions'
 
-export const siteService = {
+export const submissionService = {
     submitAdultForm,
     submitKidsForm,
     getAdultSubmissions,
@@ -15,7 +15,6 @@ export const siteService = {
     remove,
     save,
     addSubmissionManually,
-    getEmptySubmission,
   }
   
   // Manually keep in-memory arrays for quicker access
@@ -122,9 +121,3 @@ export const siteService = {
     return savedSubmission
   }
   
-  // Provide an empty submission template for both adult and kids submissions
-  function getEmptySubmission(type) {
-    return type === 'adult'
-      ? { fullName: '', email: '', phone: '', courseType: '', isSubscribe: false, isRead: false }
-      : { parentFullName: '', parentEmail: '', parentPhone: '', kidsAge: '', isSubscribe: false, isRead: false }
-  }

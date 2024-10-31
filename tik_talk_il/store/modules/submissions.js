@@ -1,4 +1,4 @@
-import { siteService } from '@/services/site.service.js'
+import { submissionService } from '@/services/subbmision'
 
 export default {
     namespaced: true,
@@ -47,7 +47,7 @@ export default {
     actions: {
         async loadAdultSubmissions({ commit }) {
             try {
-                const submissions = await siteService.getAdultSubmissions()
+                const submissions = await submissionService.getAdultSubmissions()
                 commit('setAdultSubmissions', submissions)
             } catch (err) {
                 console.error('Failed to load adult submissions:', err)
@@ -55,7 +55,7 @@ export default {
         },
         async loadKidsSubmissions({ commit }) {
             try {
-                const submissions = await siteService.getKidsSubmissions()
+                const submissions = await submissionService.getKidsSubmissions()
                 commit('setKidsSubmissions', submissions)
             } catch (err) {
                 console.error('Failed to load kids submissions:', err)
@@ -66,12 +66,12 @@ export default {
                 let savedSubmission
                 if (type === 'adult') {
                     // Save adult submission (new or update)
-                    savedSubmission = await siteService.save(submission, 'adult')
+                    savedSubmission = await submissionService.save(submission, 'adult')
                     if (!submission._id) commit('addAdultSubmission', savedSubmission)
                     else commit('updateAdultSubmission', savedSubmission)
                 } else if (type === 'kids') {
                     // Save kids submission (new or update)
-                    savedSubmission = await siteService.save(submission, 'kids')
+                    savedSubmission = await submissionService.save(submission, 'kids')
                     if (!submission._id) commit('addKidsSubmission', savedSubmission)
                     else commit('updateKidsSubmission', savedSubmission)
                 }
@@ -81,7 +81,7 @@ export default {
         },
         async deleteSubmission({ commit }, { submissionId, type }) {
             try {
-                await siteService.remove(submissionId, type)
+                await submissionService.remove(submissionId, type)
                 if (type === 'adult') {
                     commit('deleteAdultSubmission', submissionId)
                 } else {
@@ -103,7 +103,7 @@ export default {
 
                 // Toggle the isRead property
                 const updatedSubmission = { ...submission, isRead: !submission.isRead }
-                await siteService.save(updatedSubmission, type)
+                await submissionService.save(updatedSubmission, type)
 
                 // Commit the markSubmissionAsRead mutation to update the state
                 commit('markSubmissionAsRead', { submissionId, type, isRead: updatedSubmission.isRead })
@@ -121,7 +121,7 @@ export default {
             return state.kidsSubmissions
         },
         getEmptySubmission: () => () => {
-            return siteService.getEmptySubmission()
+            return submissionService.getEmptySubmission()
         },
     },
 }

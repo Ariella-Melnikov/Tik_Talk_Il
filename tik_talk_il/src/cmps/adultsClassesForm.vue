@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { siteService } from '@/services/site.service.js'
+import { submissionService } from '@/services/subbmision'
 
 export default {
     props: {
@@ -63,7 +63,7 @@ export default {
         },
         async submitForm() {
             try {
-                await siteService.submitAdultForm(this.form) // Submit the form data via siteService
+                await submissionService.submitAdultForm(this.form) // Submit the form data via submissionService
                 alert('Form submitted successfully!')
                 this.resetForm() // Reset the form after submission
                 this.$emit('close') // Close the modal
