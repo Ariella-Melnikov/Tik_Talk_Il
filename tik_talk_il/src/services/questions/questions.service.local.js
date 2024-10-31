@@ -1,5 +1,5 @@
-import { storageService } from "./async-storage.service.js"; 
-import { utilService } from "./util.service.js";
+import { storageService } from "../async-storage.service.js"; 
+import { utilService } from "../util.service.js";
 
 const STORAGE_KEY = 'questions';
 
@@ -8,7 +8,6 @@ export const questionService = {
     getById,
     save,
     remove,
-    getEmptyQuestion,
 };
 
 async function getquestions() {
@@ -39,14 +38,6 @@ async function save(question) {
 
 async function remove(questionId) {
     await storageService.remove(STORAGE_KEY, questionId)
-}
-
-function getEmptyQuestion() {
-    return {
-        text: "",
-        options: [],
-        correctAnswer: "",
-    }
 }
 
 function _createquestions() {

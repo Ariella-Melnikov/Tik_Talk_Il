@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { questionService } from '@/services/question.service.js';
+import { questionService } from '@/services/questions';
 import previewQuestion from '@/cmps/QuestionPreview.vue';
 
 export default {

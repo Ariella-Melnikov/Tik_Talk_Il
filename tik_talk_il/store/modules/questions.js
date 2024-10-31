@@ -1,4 +1,4 @@
-import { questionService } from "@/services/question.service";
+import { questionService } from "@/services/questions";
 
 export default {
     namespaced: true,
