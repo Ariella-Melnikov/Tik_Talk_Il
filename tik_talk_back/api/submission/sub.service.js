@@ -40,7 +40,8 @@ async function add(submission, type) {
     const collection = await dbService.getCollection(collectionName)
     try {
         const result = await collection.insertOne(submission)
-        return result.ops[0]
+        submission._id = result.insertedId // Attach the new ID to the submission object
+        return submission // Return the submission with the new ID
     } catch (err) {
         logger.error('Failed to add submission', err)
         throw err
@@ -49,13 +50,14 @@ async function add(submission, type) {
 
 // Update an existing submission
 async function update(submission, type) {
-    const collectionName = type === 'adult' ? 'adults_data' : 'kids_data'
-    const collection = await dbService.getCollection(collectionName)
     try {
-        const id = ObjectId(submission._id)
-        delete submission._id
-        await collection.updateOne({ _id: id }, { $set: submission })
-        return { ...submission, _id: id }
+        const { _id, ...submissionToUpdate } = submission
+        const collectionName = type === 'adult' ? 'adults_data' : 'kids_data'
+        const collection = await dbService.getCollection(collectionName)
+
+        // Perform the update operation
+        await collection.updateOne({ _id: ObjectId.createFromHexString(submission._id) }, { $set: submissionToUpdate })
+        return submission
     } catch (err) {
         logger.error('Failed to update submission', err)
         throw err
@@ -67,7 +69,7 @@ async function remove(id, type) {
     const collectionName = type === 'adult' ? 'adults_data' : 'kids_data'
     const collection = await dbService.getCollection(collectionName)
     try {
-        await collection.deleteOne({ _id: ObjectId(id) })
+        await collection.deleteOne({ _id: ObjectId.createFromHexString(id) })
     } catch (err) {
         logger.error('Failed to remove submission', err)
         throw err
