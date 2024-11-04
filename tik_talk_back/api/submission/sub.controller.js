@@ -1,4 +1,4 @@
-import { submissionService } from './submission.service.js'
+import { submissionService } from './sub.service.js'
 import { logger } from '../../services/logger.service.js'
 
 // Get submissions (adult or kids) based on the type

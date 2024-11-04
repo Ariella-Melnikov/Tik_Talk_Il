@@ -1,5 +1,5 @@
 import express from 'express'
-import { getSubmissions, getSubmissionById, addSubmission, updateSubmission, removeSubmission } from './submission.controller.js'
+import { getSubmissions, getSubmissionById, addSubmission, updateSubmission, removeSubmission } from './sub.controller.js'
 
 const router = express.Router()
 
