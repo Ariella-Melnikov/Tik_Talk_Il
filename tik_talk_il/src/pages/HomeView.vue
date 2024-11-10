@@ -1,9 +1,12 @@
 <template>
-    <section class="home-section">
-        <div class="content-container kids-banner-container" :style="{ backgroundImage: `url(${kidsBannerImage})` }">
+    <section>
+        <div class=" content-container main-banner-container" :style="{ backgroundImage: `url(${mainBannerImage})` }">
             <div class="text-content">
-                <h2>{{ $t('home.heading') }}</h2>
-                <p>{{ $t('home.description') }}</p>
+                <div class="main-banner-text">
+                    <h1 v-html="$t('home.heading')"></h1>
+                    <p v-html="$t('home.description')"></p>
+                </div>
+
                 <button @click="openModal" class="action-button">{{ $t('home.actionButton') }}</button>
             </div>
         </div>
@@ -30,7 +33,7 @@ export default {
     data() {
         return {
             isModalOpen: false,
-            kidsBannerImage: '',
+            mainBannerImage: '',
             quizBannerImage: '',
         }
     },
@@ -43,7 +46,7 @@ export default {
     methods: {
         async updateBannerImages() {
             // Dynamically import the images based on locale
-            this.kidsBannerImage = (await import(`@/assets/img/banners/kids-banner-${this.$i18n.locale}.png`)).default
+            this.mainBannerImage = (await import(`@/assets/img/banners/main-banner-${this.$i18n.locale}.png`)).default
             this.quizBannerImage = (await import(`@/assets/img/banners/women-banner-${this.$i18n.locale}.png`)).default
         },
         openModal() {
@@ -57,63 +60,83 @@ export default {
 </script>
 
 <style lang="scss">
-.home-section {
-    display: grid;
-    grid-template-columns: 1fr;
-    background-color: #faf9ef;
-    padding: 2rem;
-}
 
 .content-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    gap: 15rem;
-    // max-width: 1600px;
-    width: 100%;
-    margin-block-end: 4rem;
+    width: 100vw;
+    height: 100vh; 
+    margin-bottom: 3rem;
     padding: 2rem;
-
-    .empty-conteiner {
-        grid-column: 1; /* Ensure this is in the first column */
-    }
-
-    .quiz-content {
-        grid-column: 2; /* Ensure this is in the second column */
-    }
 }
 
-.kids-banner-container {
+.main-banner-container {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    position: relative; /* To allow overlay styling */
+    height: 70vh;
+    text-align: center;
+    position: relative;
+    color: #ffffff;
 
-    .text-content {
-        text-align: start;
-        padding-right: 2rem;
-        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        z-index: 1;
+    .main-banner-text {
+        h1 {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            line-height: 1.8;
+        }
     }
+
+    .action-button {
+        background-color: #dbd872;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #4c3777;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: #b3b061;
+        }
+    }
+
     &::before {
-        content: '';
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
+        background-color: rgba(0, 0, 0, 0.4); /* Adds a dark overlay */
         z-index: 0;
     }
-    
+
+    .text-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
 }
 
 .quiz-banner-container {
-    background-size: contain;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
 
-    /* Optional overlay */
     &::before {
         content: '';
         position: absolute;
@@ -121,34 +144,50 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
+        background-color: rgba(0, 0, 0, 0.2); /* Adds a light overlay */
         z-index: 0;
     }
 
     .quiz-content {
         position: relative;
         z-index: 1;
-        text-align: end;
+        text-align: center;
+        padding: 2rem;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 }
 
-h2 {
-    color: #4c3777;
-    margin-bottom: 1rem;
-    font-size: 2rem;
-    font-weight: bold;
-}
+// @media (max-width: 768px) {
+//     .content-container {
+//         grid-template-columns: 1fr;
+//         gap: 2rem;
+//     }
 
-p {
-    color: #2d2a6c;
-    margin-bottom: 2rem;
-    font-size: 1.5rem;
-}
+//     .main-banner-container {
+//         padding: 2rem;
 
-// @media (min-width: 1024px) {
+//         .main-banner-text {
+//             h2 {
+//                 font-size: 2rem;
+//             }
+
+//             p {
+//                 font-size: 1rem;
+//             }
+//         }
+
+//         .action-button {
+//             font-size: 0.9rem;
+//             padding: 0.5rem 1rem;
+//         }
+//     }
+
 //     .quiz-banner-container {
-//         background-size: cover; /* Only cover for large screens */
-//         background-position: center;
-//         padding: 6rem 4rem; /* Adjust padding for larger screens */
+//         .quiz-content {
+//             padding: 1.5rem;
+//         }
 //     }
 // }
 </style>

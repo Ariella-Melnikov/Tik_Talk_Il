@@ -13,9 +13,14 @@ const messages = {
         questionsManagement: 'Questions Management',
     },
     home: {
-        heading: 'English Group Lessons - Learn Together Through Experiences',
-        description: 'Online group lessons for children, using experiential learning',
-        actionButton: 'Schedule a Trial Lesson'
+        heading:  `
+        Want to learn English in the most fun way? <br />
+        You've come to the right place! <br />`, 
+        description: ` At Tik Talk, we learn English through experiential, funny, professional, and practical methods. <br />
+        Whether you're a curious kid in elementary school, preparing for relocation, an independent woman, or a busy businessperson getting ready for a professional conference or an important job interview, Tik Talk helps you improve your English while moving, playing, and having absolute fun. <br />
+        With Tik Talk's unique method, learning English becomes a fun, less intimidating, and even amusing experience, so you can progress and speak English with a smile 🙂.
+      `,
+        actionButton: 'Schedule a Trial Lesson',
       },
       form: {
         title: 'Sign Up for a Trial Lesson',
@@ -109,9 +114,14 @@ const messages = {
         questionsManagement: 'ניהול שאלות',
     },
     home: {
-        heading: 'שיעורי אנגלית בקבוצות בזום- ללמוד אנגלית מתוך משחקים, שירים והפעלות',
-        description: 'שיעורים קבוצתיים מקוונים לילדים, בעזרת למידה חווייתית, פעם בשבוע 45 דקת גילאי יסודי',
-        actionButton: 'לתיאום שיעורי ניסיון'
+        heading: ` 
+        רוצה ללמוד אנגלית בצורה הכי כיפית שיש? <br />
+        הגעת למקום הנכון!`,
+        description: `בTik Talk לומדים אנגלית בדרך חווייתית, מצחיקה, מקצועית ושימושית. <br />
+        בין אם אתם ילדים סקרנים בבית ספר יסודי, לקראת רילוקיישן, נשים עצמאיות, אנשי עסקים עסוקים לקראת כנס מקצועי או ריאיון חשוב בעבודה, בTik Talk משפרים את האנגלית תו״כ תנועה, דרך משחקים והנאה צרופה. <br />
+        בשיטה הייחודית של Tik Talk האנגלית הופכת לחוויה מהנה, פחות מאיימת ואפילו משעשעת כך שתוכלו להתקדם בלימוד ולדבר אנגלית בחיוך 🙂.
+      `,
+        actionButton: 'לתיאום שיעורי ניסיון',
       },
       form: {
         title: 'הירשמו לשיעור ניסיון',
