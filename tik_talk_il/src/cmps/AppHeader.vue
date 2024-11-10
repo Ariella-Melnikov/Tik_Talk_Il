@@ -5,6 +5,9 @@
         <nav>
             <RouterLink to="/" class="router-link">{{ $t('header.home') }}</RouterLink>
             <RouterLink to="/about" class="router-link">{{ $t('header.about') }}</RouterLink>
+            <RouterLink to="/kids" class="router-link">{{ $t('header.kidsClasses') }}</RouterLink>
+            <RouterLink to="/women" class="router-link">{{ $t('header.womenClasses') }}</RouterLink>
+            <RouterLink to="/business" class="router-link">{{ $t('header.businessClasses') }}</RouterLink>
             <RouterLink v-if="isAdminLoggedIn" to="/admin" class="router-link">{{ $t('header.admin') }}</RouterLink>
             <RouterLink v-if="!isAdminLoggedIn" to="/auth" class="router-link">{{ $t('header.login') }}</RouterLink>
             <button v-if="isAdminLoggedIn" @click="logout" class="router-link logout-button">

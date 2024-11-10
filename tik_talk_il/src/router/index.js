@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../pages/HomeView.vue'
 import AdminPage from '../pages/AdminPage.vue'
 import AuthPage from '../pages/AuthPage.vue'
+import Kids from '../pages/Kids.vue'; 
+import Women from '../pages/Women.vue'; 
+import Business from '../pages/Business.vue'; 
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +31,21 @@ const router = createRouter({
             // this generates a separate chunk (About.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
             component: () => import('../pages/About.vue'),
+        },
+        {
+            path: '/kids',
+            name: 'Kids',
+            component: Kids, 
+        },
+        {
+            path: '/women',
+            name: 'Women',
+            component: Women, 
+        },
+        {
+            path: '/business',
+            name: 'Business',
+            component: Business, 
         },
     ],
 })
