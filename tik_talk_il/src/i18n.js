@@ -11,6 +11,9 @@ const messages = {
         login: 'Login',
         logout: 'Logout',
         questionsManagement: 'Questions Management',
+        kidsClasses: 'English for kids',
+        womenClasses: 'English for women',
+        businessClasses: 'english for bussiness',
     },
     home: {
         heading:  `
@@ -21,6 +24,10 @@ const messages = {
         With Tik Talk's unique method, learning English becomes a fun, less intimidating, and even amusing experience, so you can progress and speak English with a smile 🙂.
       `,
         actionButton: 'Schedule a Trial Lesson',
+        kidsClasses: 'English classes for kids',
+        womenClasses: `Women’s English classes`,
+        businessClasses: `Business English courses`,
+
       },
       form: {
         title: 'Sign Up for a Trial Lesson',
@@ -112,6 +119,9 @@ const messages = {
         login: 'התחבר',
         logout: 'התנתק',
         questionsManagement: 'ניהול שאלות',
+        kidsClasses: 'אמגלית לילדים',
+        womenClasses: 'אמגלית לנשים',
+        businessClasses: 'אנגלית עסקית',
     },
     home: {
         heading: ` 
@@ -122,6 +132,9 @@ const messages = {
         בשיטה הייחודית של Tik Talk האנגלית הופכת לחוויה מהנה, פחות מאיימת ואפילו משעשעת כך שתוכלו להתקדם בלימוד ולדבר אנגלית בחיוך 🙂.
       `,
         actionButton: 'לתיאום שיעורי ניסיון',
+        kidsClasses: 'אנגלית לילדים',
+        womenClasses: `אנגלית לנשים`,
+        businessClasses: `אנגלית עסקית`,
       },
       form: {
         title: 'הירשמו לשיעור ניסיון',

@@ -1,19 +1,57 @@
 <template>
     <section>
-        <div class=" content-container main-banner-container" :style="{ backgroundImage: `url(${mainBannerImage})` }">
+        <div class="content-container main-banner-container" :style="{ backgroundImage: `url(${mainBannerImage})` }">
             <div class="text-content">
                 <div class="main-banner-text">
                     <h1 v-html="$t('home.heading')"></h1>
                     <p v-html="$t('home.description')"></p>
                 </div>
-
                 <button @click="openModal" class="action-button">{{ $t('home.actionButton') }}</button>
             </div>
         </div>
 
+        <!-- Buttons Section -->
+        <div class="class-grid">
+            <!-- Kids Classes -->
+            <div class="class-container">
+                <img :src="kidsImage" alt="Kids Classes" class="class-image" />
+                <h3>{{ $t('home.kidsClasses') }}</h3>
+                <div class="button-group">
+                    <RouterLink to="/kids#section1" class="class-button">Section 1</RouterLink>
+                    <RouterLink to="/kids#section2" class="class-button">Section 2</RouterLink>
+                    <RouterLink to="/kids#section3" class="class-button">Section 3</RouterLink>
+                </div>
+            </div>
+
+            <!-- Women Classes -->
+            <div class="class-container">
+                <img :src="womenImage" alt="Women Classes" class="class-image" />
+                <h3>{{ $t('home.womenClasses') }}</h3>
+                <div class="button-group">
+                    <RouterLink to="/women#section1" class="class-button">Section 1</RouterLink>
+                    <RouterLink to="/women#section2" class="class-button">Section 2</RouterLink>
+                    <RouterLink to="/women#section3" class="class-button">Section 3</RouterLink>
+                </div>
+            </div>
+
+            <!-- Business Classes -->
+            <div class="class-container">
+                <img :src="businessImage" alt="Business Classes" class="class-image" />
+                <h3>{{ $t('home.businessClasses') }}</h3>
+                <div class="button-group">
+                    <RouterLink to="/business#section1" class="class-button">Section 1</RouterLink>
+                    <RouterLink to="/business#section2" class="class-button">Section 2</RouterLink>
+                    <RouterLink to="/business#section3" class="class-button">Section 3</RouterLink>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kids Form Modal -->
         <kidsClassForm :open="isModalOpen" @close="closeModal" />
+
+        <!-- Quiz Section -->
         <div class="content-container quiz-banner-container" :style="{ backgroundImage: `url(${quizBannerImage})` }">
-            <div class="empty-conteiner"></div>
+            <div class="empty-container"></div>
             <div class="quiz-content">
                 <EnglishQuiz />
             </div>
@@ -22,11 +60,16 @@
 </template>
 
 <script>
+import { RouterLink } from 'vue-router'
 import kidsClassForm from '@/cmps/kidsClassForm.vue'
 import EnglishQuiz from '@/cmps/EnglishQuiz.vue'
+import kidsImage from '@/assets/img/cards/kids-main.png'
+import womenImage from '@/assets/img/cards/women-main.png'
+import businessImage from '@/assets/img/cards/business-main.png'
 
 export default {
     components: {
+        RouterLink,
         kidsClassForm,
         EnglishQuiz,
     },
@@ -35,6 +78,9 @@ export default {
             isModalOpen: false,
             mainBannerImage: '',
             quizBannerImage: '',
+            kidsImage,
+            womenImage,
+            businessImage,
         }
     },
     watch: {
@@ -60,13 +106,12 @@ export default {
 </script>
 
 <style lang="scss">
-
 .content-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
     width: 100vw;
-    height: 100vh; 
+    height: 100vh;
     margin-bottom: 3rem;
     padding: 2rem;
 }
@@ -156,6 +201,65 @@ export default {
         background-color: rgba(255, 255, 255, 0.9);
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Dynamic grid layout */
+    gap: 2rem; /* Space between containers */
+    padding: 1rem;
+}
+
+.class-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+.class-image {
+    width: 90%;
+    height: auto; /* Maintain aspect ratio */
+    object-fit: cover;
+    border-radius: 8px; /* Rounded corners for the image */
+    margin-bottom: 1rem; /* Add space below the image */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for the image */
+}
+
+h3 {
+    margin: 1rem 0;
+    font-size: 1.75rem;
+    color: #4c3777;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    width: 100%; /* Ensure buttons span full width */
+    align-items: center;
+}
+
+.class-button {
+    background-color: #4c3777;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    width: 80%; /* Make buttons fit nicely inside the card */
+
+    &:hover {
+        background-color: #dbd872;
     }
 }
 
