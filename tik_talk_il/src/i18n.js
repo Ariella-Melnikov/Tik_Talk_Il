@@ -13,7 +13,7 @@ const messages = {
         questionsManagement: 'Questions Management',
         kidsClasses: 'English for kids',
         womenClasses: 'English for women',
-        businessClasses: 'english for bussiness',
+        businessClasses: 'English for bussiness',
     },
     home: {
         heading:  `
@@ -27,6 +27,18 @@ const messages = {
         kidsClasses: 'English classes for kids',
         womenClasses: `Women’s English classes`,
         businessClasses: `Business English courses`,
+
+      },
+      card: {
+        kidsZoom: 'Zoom Groups classes for Elementary-by Level',
+        kidsHighSchool: '1:1 Middle School - High School', 
+        kidsRelocation: 'Preparation for Relocation', 
+        womenGroups: `Women's Zoom Study Groups [Currently Full]`,
+        womenOneOnOne: 'One-on-One Lessons', 
+        womenRelocation: 'Preparation for Relocation',
+        businessExecutives: 'Business English for Executives',
+        businessOneOnOne: 'One-on-One Business English',
+        businessEnglish: 'Preparation for Professional Events: Conferences, Interviews, and Presentations',
 
       },
       form: {
@@ -135,6 +147,17 @@ const messages = {
         kidsClasses: 'אנגלית לילדים',
         womenClasses: `אנגלית לנשים`,
         businessClasses: `אנגלית עסקית`,
+      },
+      card: {
+        kidsZoom: 'קבוצות בזום לילדים ביסודי לפי רמה',
+        kidsHighSchool: 'שיעורים פרטיים לץלמידים בחטיבה-תיכון', 
+        kidsRelocation: 'הכנה לרילוקיישן', 
+        womenGroups: `קבוצות לימוד לנשים בזום[מלא כרגע]`,
+        womenOneOnOne: 'שיעורים פרטיים 1:1', 
+        womenRelocation: 'הכנה לרילוקיישן',
+        businessExecutives: 'קבוצות אנגלית למנהלים',
+        businessOneOnOne: 'שיעורים פרטיים לאנגלית עסקית',
+        businessEnglish: 'הכנה לכנס, תערוכה, ריאיון, הרצאה ומצגת',
       },
       form: {
         title: 'הירשמו לשיעור ניסיון',
