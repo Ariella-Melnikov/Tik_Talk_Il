@@ -17,9 +17,9 @@
                 <img :src="kidsImage" alt="Kids Classes" class="class-image" />
                 <h3>{{ $t('home.kidsClasses') }}</h3>
                 <div class="button-group">
-                    <RouterLink to="/kids#section1" class="class-button">Section 1</RouterLink>
-                    <RouterLink to="/kids#section2" class="class-button">Section 2</RouterLink>
-                    <RouterLink to="/kids#section3" class="class-button">Section 3</RouterLink>
+                    <RouterLink to="/kids#zoom" class="class-button">{{ $t('card.kidsZoom') }}</RouterLink>
+                    <RouterLink to="/kids#highschool" class="class-button">{{ $t('card.kidsHighSchool') }}</RouterLink>
+                    <RouterLink to="/kids#relocation" class="class-button">{{ $t('card.kidsRelocation') }}</RouterLink>
                 </div>
             </div>
 
@@ -28,9 +28,9 @@
                 <img :src="womenImage" alt="Women Classes" class="class-image" />
                 <h3>{{ $t('home.womenClasses') }}</h3>
                 <div class="button-group">
-                    <RouterLink to="/women#section1" class="class-button">Section 1</RouterLink>
-                    <RouterLink to="/women#section2" class="class-button">Section 2</RouterLink>
-                    <RouterLink to="/women#section3" class="class-button">Section 3</RouterLink>
+                    <RouterLink to="/women#groups" class="class-button">{{ $t('card.womenGroups') }}</RouterLink>
+                    <RouterLink to="/women#oneonone" class="class-button">{{ $t('card.womenOneOnOne') }}</RouterLink>
+                    <RouterLink to="/women#relocation" class="class-button">{{ $t('card.womenRelocation') }}</RouterLink>
                 </div>
             </div>
 
@@ -39,9 +39,9 @@
                 <img :src="businessImage" alt="Business Classes" class="class-image" />
                 <h3>{{ $t('home.businessClasses') }}</h3>
                 <div class="button-group">
-                    <RouterLink to="/business#section1" class="class-button">Section 1</RouterLink>
-                    <RouterLink to="/business#section2" class="class-button">Section 2</RouterLink>
-                    <RouterLink to="/business#section3" class="class-button">Section 3</RouterLink>
+                    <RouterLink to="/business#executives" class="class-button">{{ $t('card.businessExecutives') }}</RouterLink>
+                    <RouterLink to="/business#events" class="class-button">{{ $t('card.businessEnglish') }}</RouterLink>
+                    <RouterLink to="/business#oneonone" class="class-button">{{ $t('card.businessEnglish') }}</RouterLink>
                 </div>
             </div>
         </div>
@@ -253,7 +253,7 @@ h3 {
     text-decoration: none;
     padding: 0.75rem 1rem;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 1.3rem;
     font-weight: bold;
     transition: background-color 0.3s ease;
     width: 80%; /* Make buttons fit nicely inside the card */
