@@ -5,6 +5,7 @@ import AuthPage from '../pages/AuthPage.vue'
 import Kids from '../pages/Kids.vue'; 
 import Women from '../pages/Women.vue'; 
 import Business from '../pages/Business.vue'; 
+import UserPage from '../pages/UserPage.vue';
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,6 +48,11 @@ const router = createRouter({
             name: 'Business',
             component: Business, 
         },
+        {
+            path: '/user/:id',
+            name: 'UserPage',
+            component: UserPage,
+          },
     ],
 })
 
