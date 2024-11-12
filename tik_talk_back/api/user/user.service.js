@@ -98,6 +98,7 @@ async function update(userId, user) {
             email: user.email || existingUser.email,
             phone: user.phone || existingUser.phone,
             courseType: user.courseType || existingUser.courseType,
+            sessionCredits: user.sessionCredits || existingUser.sessionCredits,
             imgUrl: user.imgUrl || existingUser.imgUrl,
         }
 
@@ -121,8 +122,9 @@ async function add(user) {
             phone: user.phone,
             courseType: user.courseType || 'General',
             sessions: [],
+            sessionCredits: user.sessionCredits || 0,
             imgUrl: user.imgUrl || '',
-            isAdmin: false,
+            isAdmin: user.isAdmin || false,
         }
         const collection = await dbService.getCollection('users')
         await collection.insertOne(userToAdd)

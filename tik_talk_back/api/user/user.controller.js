@@ -68,3 +68,4 @@ export async function updateUser(req, res) {
         res.status(400).send({ err: 'Failed to update user' })
     }
 }
+

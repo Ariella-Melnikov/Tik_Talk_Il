@@ -11,4 +11,5 @@ router.get('/:id', getUser)
 router.put('/:id', requireAuth, updateUser)
 router.delete('/:id', requireAuth, deleteUser)
 
+
 export const userRoutes = router
