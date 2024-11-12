@@ -28,7 +28,15 @@ export async function getUsers(req, res) {
 
 export async function deleteUser(req, res) {
     try {
-        await userService.remove(req.params.id)
+        const loggedInUserId = req.loggedinUser._id
+        const userIdToDelete = req.params.id
+
+        // Allow deletion only if the logged-in user is an admin or deleting their own account
+        if (loggedInUserId !== userIdToDelete && !req.loggedinUser.isAdmin) {
+            return res.status(403).send({ err: 'Unauthorized - Only admin or self can delete' })
+        }
+
+        await userService.remove(userIdToDelete)
         res.send({ msg: 'Deleted successfully' })
     } catch (err) {
         logger.error('Failed to delete user', err)
@@ -37,26 +45,24 @@ export async function deleteUser(req, res) {
 }
 
 export async function updateUser(req, res) {
-    
     try {
-        const userId = req.params.id;
-        const user = req.body;
-    
-        console.log('Logged in user:', req.loggedinUser);
-    
+        const userId = req.params.id
+        const user = req.body
+
+        console.log('Logged in user:', req.loggedinUser)
+
         // Ensure the logged-in user can only update their own data or if admin
         if (req.loggedinUser._id !== userId && !req.loggedinUser.isAdmin) {
-          return res.status(403).send({ err: 'Unauthorized - Only admin or self can update' });
+            return res.status(403).send({ err: 'Unauthorized - Only admin or self can update' })
         }
-    
+
         // Allow `isAdmin` updates only if the current user is an admin
         if (!req.loggedinUser.isAdmin && 'isAdmin' in user) {
-          delete user.isAdmin;
+            delete user.isAdmin
         }
-    
-        const updatedUser = await userService.update(userId, user);
-        res.send(updatedUser);
-        
+
+        const updatedUser = await userService.update(userId, user)
+        res.send(updatedUser)
     } catch (err) {
         logger.error('Failed to update user', err)
         res.status(400).send({ err: 'Failed to update user' })

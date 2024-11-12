@@ -4,12 +4,12 @@ import { reviewService } from '../review/review.service.js'
 import { ObjectId } from 'mongodb'
 
 export const userService = {
-    add, // Create (Signup)
-    getById, // Read (Profile page)
-    update, // Update (Edit profile)
-    remove, // Delete (remove user)
-    query, // List (of users)
-    getByUsername, // Used for Login
+    add, 
+    getById, 
+    update, 
+    remove, 
+    query, 
+    getByUsername, 
 }
 
 async function query(filterBy = {}) {
