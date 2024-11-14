@@ -9,7 +9,10 @@
             <RouterLink to="/women" class="router-link">{{ $t('header.womenClasses') }}</RouterLink>
             <RouterLink to="/business" class="router-link">{{ $t('header.businessClasses') }}</RouterLink>
             <RouterLink v-if="isAdminLoggedIn" to="/admin" class="router-link">{{ $t('header.admin') }}</RouterLink>
-            <RouterLink v-if="!isAdminLoggedIn" to="/auth" class="router-link">{{ $t('header.login') }}</RouterLink>
+            <RouterLink v-else-if="isUserLoggedIn" :to="`/user/${loggedInUserId}`" class="router-link">{{
+                $t('header.userPage')
+            }}</RouterLink>
+            <RouterLink v-else to="/auth" class="router-link">{{ $t('header.login') }}</RouterLink>
             <button v-if="isAdminLoggedIn" @click="logout" class="router-link logout-button">
                 {{ $t('header.logout') }}
             </button>
@@ -31,6 +34,8 @@ export default {
             isScrolled: false,
             logoSrc: whiteLogo,
             isAdminLoggedIn: false,
+            isUserLoggedIn: false,
+            loggedInUserId: null,
         }
     },
     computed: {
@@ -63,9 +68,19 @@ export default {
         },
         checkLoginStatus() {
             this.isAdminLoggedIn = storageService.load('isAdminLoggedIn') === true
+            const loggedInUser = storageService.load('loggedInUser')
+            if (loggedInUser) {
+                this.isUserLoggedIn = true
+                this.loggedInUserId = loggedInUser._id // Assuming user data includes an `id`
+            } else {
+                this.isUserLoggedIn = false
+                this.loggedInUserId = null
+            }
         },
     },
+
     mounted() {
+        this.checkLoginStatus()
         window.addEventListener('scroll', this.handleScroll), this.checkLoginStatus() // Check login status on page load
     },
     beforeDestroy() {
