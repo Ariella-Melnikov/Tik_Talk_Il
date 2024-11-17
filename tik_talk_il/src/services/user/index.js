@@ -1,21 +1,26 @@
-const { VITE_LOCAL, MODE } = import.meta.env;
+const { VITE_LOCAL, MODE } = import.meta.env
 
-import { userService as local } from './user.service.local'
-import { userService as remote } from './user.service.remote'
+import { userService as local } from './user.service.local.js'
+import { userService as remote } from './user.service.remote.js'
 
-function getEmptyUser(type) {
-    return type === 'adult'
-      ? { fullName: '', email: '', phone: '', courseType: '', isSubscribe: false, isRead: false }
-      : { parentFullName: '', parentEmail: '', parentPhone: '', kidsAge: '', isSubscribe: false, isRead: false }
-  }
+function getEmptyUser() {
+    return {
+        username: '',
+        password: '',
+        fullname: '',
+        email: '',
+        phone: '',
+        courseType: 'General',
+        sessionCredits: 0,
+        sessions: [],
+        isAdmin: false,
+    }
+}
 
 const service = VITE_LOCAL === 'true' ? local : remote
 export const userService = { getEmptyUser, ...service }
 
-// Easy access to this service from the dev tools console
-// when using script - dev / dev:local
-
-// Expose service for debugging in dev mode
+// Expose service for debugging in development mode
 if (MODE === 'development') {
-    window.userService = userService;
+    window.userService = userService
 }

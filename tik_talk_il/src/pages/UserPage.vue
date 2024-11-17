@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { userService } from '@/services/user.service';
+import { userService } from '@/services/user';
 
 export default {
   data() {
