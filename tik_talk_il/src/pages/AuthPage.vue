@@ -37,26 +37,20 @@ export default {
 
         submitForm() {
             if (this.isLogin) {
-                const user = userService.getUserByEmail(this.credentials.email) // Get user by email
-                if (user && user.password === this.credentials.password) {
-                    storageService.save('loggedInUser', user) // Save user info
-
-                    if (user.isAdmin) {
-                        storageService.save('isAdminLoggedIn', true) // Flag admin login
-                        this.$emit('loginAdmin')
-                        alert('Admin logged in successfully!')
-                        this.$router.push('/admin') // Redirect to Admin Page
-                    } else {
-                        alert('User logged in successfully!')
-                        this.$router.push(`/user/${user.id}`) // Redirect to User Page
-                    }
+                const admin = adminService.getAdmin();
+                if (this.credentials.email === admin.email && this.credentials.password === admin.password) {
+                    // Save login status in localStorage
+                    storageService.save('isAdminLoggedIn', true);
+                    this.$emit('loginAdmin'); // Emit event to the parent
+                    alert('Admin logged in successfully!');
+                    this.$router.push('/'); // Redirect to home page after login
                 } else {
-                    alert('Invalid email or password. Please try again.')
+                    alert('Invalid email or password. Please try again.');
                 }
             }
-        },
-    },
-}
+        }
+    }
+};
 </script>
 
 <style lang="scss">
