@@ -6,7 +6,7 @@ import { submissionService as remote } from './sub.service.remote'
 function getEmptySubmission(type) {
     return type === 'adult'
       ? { fullName: '', email: '', phone: '', courseType: '', isSubscribe: false, isRead: false }
-      : { parentFullName: '', parentEmail: '', parentPhone: '', kidsAge: '', isSubscribe: false, isRead: false }
+      : { parentFullName: '', parentEmail: '', parentPhone: '', kidsAge: '', courseType: '', isSubscribe: false, isRead: false }
   }
 
 const service = VITE_LOCAL === 'true' ? local : remote
