@@ -1,4 +1,4 @@
-import { dbService } from '../../services/db.service.js';
+import { dbService } from '../../services/db/index.js';
 import { ObjectId } from 'mongodb';
 
 export const sessionService = {

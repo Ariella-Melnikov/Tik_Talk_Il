@@ -1,22 +1,30 @@
-import { firebaseAuth } from '../services/db.service.js';
+import { firebaseAuth } from '../services/db/db.service.firebase.js'
 
 export async function requireAuth(req, res, next) {
     // Extract the token from the Authorization header
-    const token = req.headers.authorization?.split('Bearer ')[1];
-    if (!token) return res.status(401).send({ err: 'Unauthorized' }); // If no token is provided, block access
+    const token = req.headers.authorization?.split('Bearer ')[1]
+    if (!token) return res.status(401).send({ err: 'Unauthorized' }) // If no token is provided, block access
 
     try {
-        // Verify the token using Firebase Admin SDK
-        const decodedToken = await firebaseAuth.verifyIdToken(token);
+        let decodedToken
 
-        // Attach the decoded token (user information) to the request object
-        req.user = decodedToken;
+        if (process.env.DB_TYPE === 'firebase') {
+            // Firebase Authentication
+            decodedToken = await firebaseAuth.verifyIdToken(token)
+            req.user = decodedToken
+        } else if (process.env.DB_TYPE === 'mongo') {
+            // MongoDB Session
+            const sessionCollection = dbService.collection('sessions')
+            const session = await sessionCollection.findOne({ token })
 
-        // Proceed to the next middleware or route handler
-        next();
+            if (!session) throw new Error('Invalid token')
+            req.user = session.user
+        }
+
+        next()
     } catch (err) {
         // Handle invalid or expired tokens
-        res.status(401).send({ err: 'Unauthorized' });
+        res.status(401).send({ err: 'Unauthorized' })
     }
 }
 

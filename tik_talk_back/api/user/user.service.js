@@ -1,4 +1,4 @@
-import { dbService } from '../../services/db.service.js'
+import { dbService } from '../../services/db/index.js';
 import { logger } from '../../services/logger.service.js'
 import { reviewService } from '../review/review.service.js'
 import { ObjectId } from 'mongodb'
@@ -9,113 +9,144 @@ export const userService = {
     update, 
     remove, 
     query, 
-    getByUsername, 
+    getByEmail, 
 }
 
 async function query(filterBy = {}) {
-    const criteria = _buildCriteria(filterBy)
     try {
-        const collection = await dbService.getCollection('users')
-        var users = await collection.find(criteria).toArray()
-        users = users.map((user) => {
-            delete user.password
-            user.createdAt = user._id.getTimestamp()
-            // Returning fake fresh data
-            // user.createdAt = Date.now() - (1000 * 60 * 60 * 24 * 3) // 3 days ago
-            return user
-        })
-        return users
+        if (process.env.DB_TYPE === 'firebase') {
+            const usersSnapshot = await dbService.collection('users').get();
+            const users = [];
+            usersSnapshot.forEach((doc) => {
+                const user = doc.data();
+                delete user.password; // Remove sensitive data
+                user.id = doc.id;
+                users.push(user);
+            });
+            return users;
+        } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('users');
+            const cursor = await collection.find(_buildCriteria(filterBy));
+            return await cursor.toArray();
+        }
     } catch (err) {
-        logger.error('cannot find users', err)
-        throw err
+        logger.error('Cannot find users', err);
+        throw err;
     }
 }
 
 async function getById(userId) {
     try {
-        var criteria = { _id: ObjectId.createFromHexString(userId) }
-
-        const collection = await dbService.getCollection('users')
-        const user = await collection.findOne(criteria)
-
-        if (!user) throw new Error('User not found')
-
-        delete user.password
-
-        // Fetch user's session data
-        const sessionCriteria = { userId: ObjectId.createFromHexString(userId) }
-        user.sessions = await dbService.getCollection('sessions').find(sessionCriteria).toArray()
-
-        // criteria = { byUserId: userId }
-
-        // user.givenReviews = await reviewService.query(criteria)
-        // user.givenReviews = user.givenReviews.map(review => {
-        //     delete review.byUser
-        //     return review
-        // })
-
-        return user
+        if (process.env.DB_TYPE === 'firebase') {
+            const userDoc = await dbService.collection('users').doc(userId).get();
+            if (!userDoc.exists) throw new Error('User not found');
+            const user = userDoc.data();
+            delete user.password; // Remove sensitive data
+            return { id: userDoc.id, ...user };
+        } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('users');
+            const user = await collection.findOne({ _id: new ObjectId(userId) });
+            if (!user) throw new Error('User not found');
+            delete user.password; // Remove sensitive data
+            return user;
+        }
     } catch (err) {
-        logger.error(`while finding user by id: ${userId}`, err)
-        throw err
+        logger.error(`Error finding user by ID: ${userId}`, err);
+        throw err;
     }
 }
 
-async function getByUsername(username) {
+async function getByEmail(email) {
     try {
-        const collection = await dbService.getCollection('users')
-        const user = await collection.findOne({ username })
-        return user
+        if (process.env.DB_TYPE === 'firebase') {
+            const usersSnapshot = await dbService.collection('users').where('email', '==', email).get();
+            if (usersSnapshot.empty) return null;
+            const userDoc = usersSnapshot.docs[0];
+            const user = userDoc.data();
+            delete user.password; // Remove sensitive data
+            return { id: userDoc.id, ...user };
+        } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('users');
+            const user = await collection.findOne({ email });
+            if (!user) return null;
+            delete user.password; // Remove sensitive data
+            return user;
+        }
     } catch (err) {
-        logger.error(`while finding user by username: ${username}`, err)
-        throw err
+        logger.error(`Error finding user by email: ${email}`, err);
+        throw err;
     }
 }
 
 async function remove(userId) {
     try {
-        const criteria = { _id: ObjectId.createFromHexString(userId) }
-
-        const collection = await dbService.getCollection('users')
-        await collection.deleteOne(criteria)
+        if (process.env.DB_TYPE === 'firebase') {
+            const userRef = dbService.collection('users').doc(userId);
+            await userRef.delete();
+        } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('users');
+            await collection.deleteOne({ _id: new ObjectId(userId) });
+        }
     } catch (err) {
-        logger.error(`cannot remove user ${userId}`, err)
-        throw err
+        logger.error(`Cannot remove user ${userId}`, err);
+        throw err;
     }
 }
 
 async function update(userId, user) {
     try {
-        const collection = await dbService.getCollection('users')
+        if (!userId) throw new Error('Missing userId');
 
-        // Fetch existing user
-        const existingUser = await collection.findOne({ _id: new ObjectId(userId) })
-        if (!existingUser) throw new Error(`User with ID ${userId} not found`)
+        // Define allowed fields for updating
+        const allowedFields = ['fullname', 'email', 'phone', 'courseType', 'sessionCredits', 'imgUrl'];
 
-        // peek only updatable properties
-        const userToUpdate = {
-            fullname: user.fullname || existingUser.fullname,
-            email: user.email || existingUser.email,
-            phone: user.phone || existingUser.phone,
-            courseType: user.courseType || existingUser.courseType,
-            sessionCredits: user.sessionCredits || existingUser.sessionCredits,
-            imgUrl: user.imgUrl || existingUser.imgUrl,
+        if (process.env.DB_TYPE === 'firebase') {
+            const userRef = dbService.collection('users').doc(userId);
+            const userDoc = await userRef.get();
+
+            if (!userDoc.exists) throw new Error(`User with ID ${userId} not found`);
+            const existingUser = userDoc.data();
+
+            // Prepare fields to update
+            const userToUpdate = allowedFields.reduce((acc, field) => {
+                acc[field] = user[field] || existingUser[field];
+                return acc;
+            }, {});
+
+            await userRef.update(userToUpdate);
+            return { id: userId, ...existingUser, ...userToUpdate };
+
+        } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('users');
+            const existingUser = await collection.findOne({ _id: new ObjectId(userId) });
+
+            if (!existingUser) throw new Error(`User with ID ${userId} not found`);
+
+            // Prepare fields to update
+            const userToUpdate = allowedFields.reduce((acc, field) => {
+                acc[field] = user[field] || existingUser[field];
+                return acc;
+            }, {});
+
+            const result = await collection.updateOne(
+                { _id: new ObjectId(userId) },
+                { $set: userToUpdate }
+            );
+
+            if (result.matchedCount === 0) throw new Error(`Failed to update user with ID ${userId}`);
+
+            return { ...existingUser, ...userToUpdate, _id: userId };
         }
-
-        await collection.updateOne({ _id: new ObjectId(userId) }, { $set: userToUpdate })
-
-        return { ...existingUser, ...userToUpdate, _id: userId }
     } catch (err) {
-        logger.error(`cannot update user ${user._id}`, err)
-        throw err
+        logger.error(`Cannot update user ${userId}`, err);
+        throw err;
     }
 }
 
 async function add(user) {
     try {
-        // peek only updatable fields!
+        // Only allow specific fields to be added
         const userToAdd = {
-            username: user.username,
             password: user.password,
             fullname: user.fullname,
             email: user.email,
@@ -125,31 +156,39 @@ async function add(user) {
             sessionCredits: user.sessionCredits || 0,
             imgUrl: user.imgUrl || '',
             isAdmin: user.isAdmin || false,
+            createdAt: new Date(),
+        };
+
+        // Ensure required fields are present
+        if (!userToAdd.password || !userToAdd.fullname || !userToAdd.email) {
+            throw new Error('Missing required fields: password, fullname, or email');
         }
-        const collection = await dbService.getCollection('users')
-        await collection.insertOne(userToAdd)
-        return userToAdd
+
+        // Add user to the database
+        if (process.env.DB_TYPE === 'firebase') {
+            const userRef = await dbService.collection('users').add(userToAdd);
+            return { id: userRef.id, ...userToAdd };
+        } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('users');
+            const result = await collection.insertOne(userToAdd);
+            return { ...userToAdd, _id: result.insertedId };
+        }
     } catch (err) {
-        logger.error('cannot add user', err)
-        throw err
+        logger.error('Cannot add user', err);
+        throw err;
     }
 }
 
 function _buildCriteria(filterBy) {
-    const criteria = {}
+    const criteria = {};
     if (filterBy.txt) {
-        const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
         criteria.$or = [
-            {
-                username: txtCriteria,
-            },
-            {
-                fullname: txtCriteria,
-            },
-        ]
+            { fullname: { $regex: filterBy.txt, $options: 'i' } },
+            { email: { $regex: filterBy.txt, $options: 'i' } },
+        ];
     }
     if (filterBy.minBalance) {
-        criteria.score = { $gte: filterBy.minBalance }
+        criteria.balance = { $gte: filterBy.minBalance };
     }
-    return criteria
+    return criteria;
 }

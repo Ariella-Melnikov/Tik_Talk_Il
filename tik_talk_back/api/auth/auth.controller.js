@@ -1,71 +1,56 @@
-import { firebaseAuth, dbService } from '../../services/db.service.js'
+import { firebaseAuth } from '../../services/db/db.service.firebase.js'
+import { dbService } from '../../services/db/index.js'
 import { logger } from '../../services/logger.service.js'
+import { authService } from './auth.service.js';
 
 export async function login(req, res) {
-    const { email, password } = req.body
+    const { email, password } = req.body;
     try {
-        // Sign in the user with Firebase Authentication
-        const user = await firebaseAuth.getUserByEmail(email)
+        let user;
 
-        // Optional: Generate a custom token for frontend use
-        const customToken = await firebaseAuth.createCustomToken(user.uid)
+        if (process.env.DB_TYPE === 'firebase') {
+            user = await firebaseAuth.getUserByEmail(email);
 
-        res.json({ user, token: customToken })
+            // Generate a custom token for frontend use
+            const customToken = await firebaseAuth.createCustomToken(user.uid);
+            return res.json({ user, token: customToken });
+
+        } else if (process.env.DB_TYPE === 'mongo') {
+            // MongoDB Authentication
+            const usersCollection = dbService.collection('users');
+            user = await usersCollection.findOne({ email });
+
+            if (!user || user.password !== password) {
+                throw new Error('Invalid email or password');
+            }
+        }
+
+        res.json({ user });
     } catch (err) {
-        logger.error('Failed to Login', err)
-        res.status(401).send({ err: 'Failed to Login' })
+        logger.error('Failed to Login', err);
+        res.status(401).send({ err: 'Failed to Login' });
     }
 }
+
 export async function signup(req, res) {
-    const { email, password, fullname, courseType, phone } = req.body
+    const { email, password, fullname, courseType, phone } = req.body;
 
     try {
-        console.log('Signup request received with:', { email, fullname, courseType, phone });
-        // Create a new user with Firebase Authentication
-        const userRecord = await firebaseAuth.createUser({
+        const userToAdd = {
             email,
             password,
-            displayName: fullname, // Save the full name in the Firebase user profile
-        })
-        console.log('Firebase user created:', userRecord);
-
-        // Save additional fields in Firestore
-        await dbService.collection('users').doc(userRecord.uid).set({
-            email,
             fullname,
             courseType,
             phone,
-			isAdmin: false,
+            isAdmin: false,
             createdAt: new Date(),
-        })
+        };
 
-        console.log('User saved to Firestore:', userRecord.uid);
-
-        // 3. Generate a custom token for frontend use
-        const customToken = await firebaseAuth.createCustomToken(userRecord.uid);
-        console.log('Generated custom token:', customToken);
-
-        // 4. Respond with user details and token
-        res.json({
-            user: {
-                uid: userRecord.uid,
-                email: userRecord.email,
-                fullname: userRecord.displayName,
-                courseType,
-                phone,
-                isAdmin: false,
-            },
-            token: customToken,
-        });
-        
+        const user = await authService.signup(userToAdd); // Pass userToAdd to the service
+        res.json({ user });
     } catch (err) {
-        // Enhanced error handling
-        if (err.code === 'auth/email-already-exists') {
-            res.status(400).send({ err: 'Email already in use' });
-        } else {
-            logger.error('Failed to Signup:', err.message);
-            res.status(400).send({ err: 'Failed to Signup' });
-        }
+        logger.error('Failed to Signup', err);
+        res.status(400).send({ err: 'Failed to Signup' });
     }
 }
 

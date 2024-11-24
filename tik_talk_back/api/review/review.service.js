@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb'
 
 import { asyncLocalStorage } from '../../services/als.service.js'
 import { logger } from '../../services/logger.service.js'
-import { dbService } from '../../services/db.service.js'
+import { dbService } from '../../services/db/index.js'
 
 export const reviewService = { query, remove, add }
 
