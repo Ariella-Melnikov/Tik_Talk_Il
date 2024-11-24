@@ -1,19 +1,23 @@
-import { config } from '../config/index.js'
-import { logger } from '../services/logger.service.js'
-import { asyncLocalStorage } from '../services/als.service.js'
+import { firebaseAuth } from '../services/db.service.js';
 
-export function requireAuth(req, res, next) {
-    const alsStore = asyncLocalStorage.getStore()
-    const loggedinUser = alsStore?.get('loggedinUser')
+export async function requireAuth(req, res, next) {
+    // Extract the token from the Authorization header
+    const token = req.headers.authorization?.split('Bearer ')[1];
+    if (!token) return res.status(401).send({ err: 'Unauthorized' }); // If no token is provided, block access
 
-    if (!loggedinUser) {
-        console.log('Authentication failed: No loggedinUser found in ALS store.')
-        return res.status(401).send({ err: 'Not Authenticated' })
+    try {
+        // Verify the token using Firebase Admin SDK
+        const decodedToken = await firebaseAuth.verifyIdToken(token);
+
+        // Attach the decoded token (user information) to the request object
+        req.user = decodedToken;
+
+        // Proceed to the next middleware or route handler
+        next();
+    } catch (err) {
+        // Handle invalid or expired tokens
+        res.status(401).send({ err: 'Unauthorized' });
     }
-
-    console.log('Authenticated user:', loggedinUser)
-    req.loggedinUser = loggedinUser // Attach the user to the request object
-    next()
 }
 
 export function requireAdmin(req, res, next) {

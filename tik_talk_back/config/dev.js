@@ -1,4 +1,6 @@
-export default  {
-  dbURL: 'mongodb://127.0.0.1:27017',
-  dbName : 'tik_talk_il'
-}
+export default {
+  firebase: {
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      databaseURL: process.env.FIREBASE_DATABASE_URL_DEV,
+  },
+};
