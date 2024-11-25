@@ -15,10 +15,18 @@ export default {
     actions: {
         async login({ commit }, credentials) {
             try {
-                const loggedInUser = await authService.login(credentials)
-                commit('setUser', loggedInUser)
+                const response = await authService.login(credentials)
+
+                // Expect the response structure to include both `user` and `idToken`
+                const { user, idToken } = response
+                if (!user || !idToken) {
+                    throw new Error('Invalid response structure')
+                }
+
+                commit('setUser', { user, idToken })
             } catch (err) {
-                console.error('Failed to login:', err)
+                console.error('Failed to login:', err.message)
+                throw err // Rethrow the error for further handling in the component
             }
         },
         async signup({ commit }, user) {

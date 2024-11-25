@@ -59,8 +59,15 @@ export default {
         async submitForm() {
             try {
                 if (this.isLogin) {
-                    const user = await this.login(this.credentials)
-                    this.$router.push(user.isAdmin ? '/admin' : '/user')
+                    const loggedInUser = await this.login(this.credentials)
+
+                    // Ensure user object and idToken exist in the response
+                    if (!loggedInUser?.user || !loggedInUser?.idToken) {
+                        throw new Error('Invalid login response')
+                    }
+
+                    // Use `loggedInUser.user.isAdmin` for redirection
+                    this.$router.push(loggedInUser.user.isAdmin ? '/admin' : '/user')
                 } else {
                     await this.signup(this.credentials)
                     alert('Signup successful! Please log in.')
@@ -68,6 +75,7 @@ export default {
                 }
             } catch (err) {
                 console.error('Authentication failed:', err.message)
+                alert('Failed to authenticate. Please check your credentials.')
             }
         },
     },
