@@ -10,6 +10,9 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  build: {
+    outDir: '../tik_talk_back/public' 
+},
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

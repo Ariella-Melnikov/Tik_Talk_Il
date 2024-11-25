@@ -10,7 +10,7 @@ export async function setupAsyncLocalStorage(req, res, next) {
         }
 
         if (!token) {
-            console.log('No loginToken provided.')
+            // console.log('No loginToken provided.')
             return next()
         }
 
