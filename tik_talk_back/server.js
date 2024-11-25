@@ -1,7 +1,7 @@
-import admin from 'firebase-admin';
-import dotenv from 'dotenv';
+import admin from 'firebase-admin'
+import dotenv from 'dotenv'
 
-dotenv.config(); // Load environment variables
+dotenv.config() // Load environment variables
 
 import http from 'http'
 import path from 'path'
@@ -15,6 +15,7 @@ import { userRoutes } from './api/user/user.routes.js'
 import { authRoutes } from './api/auth/auth.routes.js'
 import { submissionRoutes } from './api/submission/sub.routes.js'
 import { sessionRoutes } from './api/session/session.routes.js'
+import { questionRoutes } from './api/questions/questions.routes.js'
 
 // import { setupSocketAPI } from './services/socket.service.js'
 // import { reviewRoutes } from './api/review/review.routes.js'
@@ -41,14 +42,11 @@ app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/sessions', sessionRoutes)
 app.use('/api/submissions', submissionRoutes)
+app.use('/api/questions', questionRoutes)
 // app.use('/api/review', reviewRoutes)
 
 // setupSocketAPI(server)
 
-// Make every unhandled server-side-route match index.html
-// so when requesting http://localhost:3030/unhandled-route...
-// it will still serve the index.html file
-// and allow vue/react-router to take it from there
 
 app.get('/**', (req, res) => {
     res.sendFile(path.resolve('public/index.html'))
