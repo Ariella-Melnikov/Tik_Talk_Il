@@ -1,28 +1,45 @@
-import { userService } from '@/services/user';
+import { authService } from '@/services/auth'
 
 export default {
-  namespaced: true,
-  state: {
-    user: null,
-  },
-  mutations: {
-    setUser(state, user) {
-      state.user = user;
+    namespaced: true,
+    state: {
+        user: null,
+        idToken: null,
     },
-  },
-  actions: {
-    async loadUser({ commit }, userId) {
-      try {
-        const user = await userService.getById(userId);
-        commit('setUser', user);
-      } catch (err) {
-        console.error('Failed to load user:', err);
-      }
+    mutations: {
+        setUser(state, { user, idToken }) {
+            state.user = user
+            state.idToken = idToken
+        },
     },
-  },
-  getters: {
-    user(state) {
-      return state.user;
+    actions: {
+        async login({ commit }, credentials) {
+            try {
+                const loggedInUser = await authService.login(credentials)
+                commit('setUser', loggedInUser)
+            } catch (err) {
+                console.error('Failed to login:', err)
+            }
+        },
+        async signup({ commit }, user) {
+            try {
+                const loggedInUser = await authService.signup(user)
+                commit('setUser', loggedInUser)
+            } catch (err) {
+                console.error('Failed to signup:', err)
+            }
+        },
+        logout({ commit }) {
+            authService.logout()
+            commit('setUser', { user: null, idToken: null })
+        },
     },
-  },
-};
+    getters: {
+        user(state) {
+            return state.user
+        },
+        idToken(state) {
+            return state.idToken
+        },
+    },
+}

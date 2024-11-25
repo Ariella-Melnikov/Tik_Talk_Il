@@ -8,10 +8,11 @@
             <RouterLink to="/kids" class="router-link">{{ $t('header.kidsClasses') }}</RouterLink>
             <RouterLink to="/women" class="router-link">{{ $t('header.womenClasses') }}</RouterLink>
             <RouterLink to="/business" class="router-link">{{ $t('header.businessClasses') }}</RouterLink>
-            <RouterLink v-if="isAdminLoggedIn" to="/admin" class="router-link">{{ $t('header.admin') }}</RouterLink>
-            <RouterLink v-if="!isAdminLoggedIn" to="/auth" class="router-link">{{ $t('header.login') }}</RouterLink>
+            <RouterLink v-if="isAdmin" to="/admin" class="router-link">{{ $t('header.admin') }}</RouterLink>
+            <RouterLink v-else-if="isLoggedIn" to="/user" class="router-link">{{ $t('header.user') }}</RouterLink>
+            <RouterLink v-else to="/auth" class="router-link">{{ $t('header.login') }}</RouterLink>
 
-            <button v-if="isAdminLoggedIn" @click="logout" class="router-link logout-button">
+            <button v-if="isLoggedIn" @click="logout" class="router-link logout-button">
                 {{ $t('header.logout') }}
             </button>
             <button @click="toggleLanguage" class="language-switcher">
@@ -22,23 +23,27 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import whiteLogo from '@/assets/img/logo/tik_talk_logo_white.png'
 import emptyLogo from '@/assets/img/logo/tik_talk_logo_empty.png'
-import { storageService } from '@/services/storage.service.js'
 
 export default {
     data() {
         return {
             isScrolled: false,
             logoSrc: whiteLogo,
-            isAdminLoggedIn: false,
-            isUserLoggedIn: false,
-            loggedInUserId: null,
         }
     },
     computed: {
         isAboutPage() {
             return this.$route.path === '/about'
+        },
+        ...mapGetters('users', ['user']),
+        isLoggedIn() {
+            return !!this.user
+        },
+        isAdmin() {
+            return this.user?.isAdmin || false
         },
     },
     methods: {
@@ -56,30 +61,22 @@ export default {
                 this.logoSrc = whiteLogo
             }
         },
-        loginAdmin() {
-            this.isAdminLoggedIn = true
-        },
         logout() {
-            this.isAdminLoggedIn = false
-            storageService.save('isAdminLoggedIn', false) // Remove login status
-            alert('Logged out successfully')
+            this.$store.dispatch('users/logout')
         },
         checkLoginStatus() {
-            this.isAdminLoggedIn = storageService.load('isAdminLoggedIn') === true
-            const loggedInUser = storageService.load('loggedInUser')
-            if (loggedInUser) {
-                this.isUserLoggedIn = true
-                this.loggedInUserId = loggedInUser._id // Assuming user data includes an `id`
+            // This is a placeholder. You may customize it as per your requirements.
+            const user = this.user
+            if (user) {
+                console.log('User is logged in:', user)
             } else {
-                this.isUserLoggedIn = false
-                this.loggedInUserId = null
+                console.log('No user is logged in.')
             }
         },
     },
 
     mounted() {
-        this.checkLoginStatus()
-        window.addEventListener('scroll', this.handleScroll), this.checkLoginStatus() // Check login status on page load
+        window.addEventListener('scroll', this.handleScroll), this.checkLoginStatus()
     },
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll)

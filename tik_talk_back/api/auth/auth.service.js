@@ -5,6 +5,7 @@ import { firebaseAuth } from '../../services/db/db.service.firebase.js'
 export const authService = {
     signup,
     login,
+    validateToken,
 }
 
 async function login(email, password) {
@@ -45,5 +46,15 @@ async function signup(userToAdd) {
     } catch (err) {
         logger.error('Error in authService.signup:', err);
         throw err;
+    }
+}
+
+async function validateToken(token) {
+    try {
+        const decodedToken = await firebaseAuth.verifyIdToken(token); // Verify ID token
+        return decodedToken;
+    } catch (err) {
+        console.error('Error validating token:', err.message);
+        throw new Error('Invalid token');
     }
 }

@@ -30,7 +30,9 @@
                 <div class="button-group">
                     <RouterLink to="/women#groups" class="class-button">{{ $t('card.womenGroups') }}</RouterLink>
                     <RouterLink to="/women#oneonone" class="class-button">{{ $t('card.womenOneOnOne') }}</RouterLink>
-                    <RouterLink to="/women#relocation" class="class-button">{{ $t('card.womenRelocation') }}</RouterLink>
+                    <RouterLink to="/women#relocation" class="class-button">{{
+                        $t('card.womenRelocation')
+                    }}</RouterLink>
                 </div>
             </div>
 
@@ -39,9 +41,13 @@
                 <img :src="businessImage" alt="Business Classes" class="class-image" />
                 <h3>{{ $t('home.businessClasses') }}</h3>
                 <div class="button-group">
-                    <RouterLink to="/business#executives" class="class-button">{{ $t('card.businessExecutives') }}</RouterLink>
+                    <RouterLink to="/business#executives" class="class-button">{{
+                        $t('card.businessExecutives')
+                    }}</RouterLink>
                     <RouterLink to="/business#events" class="class-button">{{ $t('card.businessEnglish') }}</RouterLink>
-                    <RouterLink to="/business#oneonone" class="class-button">{{ $t('card.businessEnglish') }}</RouterLink>
+                    <RouterLink to="/business#oneonone" class="class-button">{{
+                        $t('card.businessEnglish')
+                    }}</RouterLink>
                 </div>
             </div>
         </div>
@@ -84,16 +90,28 @@ export default {
         }
     },
     watch: {
-        '$i18n.locale': 'updateBannerImages', // Watch for language change to update images
+        '$i18n.locale': 'updateBannerImages',
     },
     mounted() {
-        this.updateBannerImages() // Initial load for the banner images
+        this.updateBannerImages()
     },
     methods: {
         async updateBannerImages() {
-            // Dynamically import the images based on locale
-            this.mainBannerImage = (await import(`@/assets/img/banners/main-banner-${this.$i18n.locale}.png`)).default
-            this.quizBannerImage = (await import(`@/assets/img/banners/women-banner-${this.$i18n.locale}.png`)).default
+            try {
+                const locale = this.$i18n.locale || 'en' 
+                const mainBannerImport = await import(`@/assets/img/banners/main-banner-${locale}.png`)
+                const quizBannerImport = await import(`@/assets/img/banners/women-banner-${locale}.png`)
+
+                this.mainBannerImage = mainBannerImport.default
+                this.quizBannerImage = quizBannerImport.default
+
+            } catch (err) {
+                console.error('Failed to update banner images:', err)
+
+                // Fallback images
+                this.mainBannerImage = require('@/assets/img/banners/main-banner-en.png').default
+                this.quizBannerImage = require('@/assets/img/banners/women-banner-en.png').default
+            }
         },
         openModal() {
             this.isModalOpen = true

@@ -2,32 +2,29 @@ import { authService } from '../api/auth/auth.service.js'
 import { asyncLocalStorage } from '../services/als.service.js'
 
 export async function setupAsyncLocalStorage(req, res, next) {
-    asyncLocalStorage.run(new Map(), () => {
-        if (!req.cookies?.loginToken) {
-            console.log('No loginToken in cookies.')
+    asyncLocalStorage.run(new Map(), async () => {
+        let token = req.cookies?.loginToken // Check cookies for token
+
+        if (!token && req.headers.authorization) {
+            token = req.headers.authorization.split('Bearer ')[1] // Check Authorization header
+        }
+
+        if (!token) {
+            console.log('No loginToken provided.')
             return next()
         }
 
-		const loggedinUser = authService.validateToken(req.cookies.loginToken);
-		if (loggedinUser) {
-		  const alsStore = asyncLocalStorage.getStore();
-		  alsStore.set('loggedinUser', loggedinUser);
-		  console.log('Stored loggedinUser in ALS:', loggedinUser);
-		} else {
-		  console.log('Invalid loginToken provided.');
-		}
+        try {
+            const loggedInUser = await authService.validateToken(token)
+            if (loggedInUser) {
+                const alsStore = asyncLocalStorage.getStore()
+                alsStore.set('loggedinUser', loggedInUser)
+                console.log('Stored loggedinUser in ALS:', loggedInUser)
+            }
+        } catch (err) {
+            console.error('Failed to validate token:', err.message)
+        }
+
         next()
     })
-    // const storage = {}
-
-    // asyncLocalStorage.run(storage, () => {
-    // 	if (!req.cookies?.loginToken) return next()
-    // 	const loggedinUser = authService.validateToken(req.cookies.loginToken)
-
-    // 	if (loggedinUser) {
-    // 		const alsStore = asyncLocalStorage.getStore()
-    // 		alsStore.loggedinUser = loggedinUser
-    // 	}
-    // 	next()
-    // })
 }

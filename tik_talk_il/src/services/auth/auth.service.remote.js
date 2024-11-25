@@ -8,15 +8,23 @@ export const authService = {
 }
 
 async function login(credentials) {
-    const user = await httpService.post('/api/auth/login', credentials)
-    localStorage.setItem('loggedinUser', JSON.stringify(user))
-    return user
+    const response = await httpService.post('/api/auth/login', credentials)
+
+    // Store the user and ID token in localStorage
+    const { user, idToken } = response
+    const loggedInUser = { ...user, idToken }
+    localStorage.setItem('loggedinUser', JSON.stringify(loggedInUser))
+    return loggedInUser
 }
 
 async function signup(user) {
-    const newUser = await httpService.post('/api/auth/signup', user)
-    localStorage.setItem('loggedinUser', JSON.stringify(newUser))
-    return newUser
+    const response = await httpService.post('/api/auth/signup', user)
+
+    // Store the user and ID token in localStorage
+    const { user: newUser, idToken } = response
+    const loggedInUser = { ...newUser, idToken }
+    localStorage.setItem('loggedinUser', JSON.stringify(loggedInUser))
+    return loggedInUser
 }
 
 function getLoggedInUser() {

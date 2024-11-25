@@ -10,6 +10,24 @@
                 <label for="password">Password:</label>
                 <input type="password" id="password" v-model="credentials.password" required />
             </div>
+            <!-- Additional fields for signup -->
+            <div v-if="!isLogin" class="form-group">
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" v-model="credentials.fullname" required />
+            </div>
+            <div v-if="!isLogin" class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" v-model="credentials.phone" required />
+            </div>
+            <div v-if="!isLogin" class="form-group">
+                <label for="courseType">Course Type:</label>
+                <select id="courseType" v-model="credentials.courseType" required>
+                    <option value="General English">General English</option>
+                    <option value="Business English">Business English</option>
+                    <option value="Kids English">Kids English</option>
+                    <option value="English for Women">English for Women</option>
+                </select>
+            </div>
             <button type="submit">{{ isLogin ? 'Login' : 'Sign Up' }}</button>
         </form>
         <button @click="toggleMode">{{ isLogin ? 'Need to sign up?' : 'Already have an account?' }}</button>
@@ -17,8 +35,7 @@
 </template>
 
 <script>
-import { adminService } from '../services/admin.service.js'
-import { storageService } from '../services/storage.service.js'
+import { mapActions } from 'vuex'
 
 export default {
     data() {
@@ -26,31 +43,35 @@ export default {
             credentials: {
                 email: '',
                 password: '',
+                fullname: '',
+                phone: '',
+                courseType: 'General English',
             },
             isLogin: true,
         }
     },
     methods: {
+        ...mapActions('users', ['signup', 'login']),
         toggleMode() {
             this.isLogin = !this.isLogin
         },
 
-        submitForm() {
-            if (this.isLogin) {
-                const admin = adminService.getAdmin();
-                if (this.credentials.email === admin.email && this.credentials.password === admin.password) {
-                    // Save login status in localStorage
-                    storageService.save('isAdminLoggedIn', true);
-                    this.$emit('loginAdmin'); // Emit event to the parent
-                    alert('Admin logged in successfully!');
-                    this.$router.push('/'); // Redirect to home page after login
+        async submitForm() {
+            try {
+                if (this.isLogin) {
+                    const user = await this.login(this.credentials)
+                    this.$router.push(user.isAdmin ? '/admin' : '/user')
                 } else {
-                    alert('Invalid email or password. Please try again.');
+                    await this.signup(this.credentials)
+                    alert('Signup successful! Please log in.')
+                    this.toggleMode()
                 }
+            } catch (err) {
+                console.error('Authentication failed:', err.message)
             }
-        }
-    }
-};
+        },
+    },
+}
 </script>
 
 <style lang="scss">
