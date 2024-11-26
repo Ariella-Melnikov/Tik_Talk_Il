@@ -23,10 +23,11 @@ export default {
     actions: {
         async loadQuestions({ commit }) {
             try {
-                const questions = await questionService.getquestions();
-                commit('setQuestions', questions);
+                const questions = await questionService.getQuestions()
+                commit('setQuestions', questions)
             } catch (err) {
-                console.error('Failed to load questions:', err);
+                console.error('Failed to load questions:', err)
+                throw err
             }
         },
         async saveQuestion({ commit }, question) {

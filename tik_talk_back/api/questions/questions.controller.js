@@ -3,11 +3,11 @@ import { logger } from '../../services/logger.service.js';
 
 export async function getQuestions(req, res) {
     try {
-        const questions = await questionService.query();
-        res.json(questions);
+        const questions = await questionService.query()
+        res.json(questions) // Make sure we're sending JSON
     } catch (err) {
-        logger.error('Failed to fetch questions', err);
-        res.status(500).send({ err: 'Failed to fetch questions' });
+        console.error('Failed to fetch questions:', err)
+        res.status(500).json({ error: 'Failed to fetch questions' })
     }
 }
 

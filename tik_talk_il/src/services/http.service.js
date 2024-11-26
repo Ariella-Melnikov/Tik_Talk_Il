@@ -1,59 +1,114 @@
 import Axios from 'axios'
 
-const BASE_URL = process.env.NODE_ENV === 'production' ? '/api/' : '//localhost:3030/api/'
-
-const axios = Axios.create({ withCredentials: true })
+const BASE_URL = process.env.NODE_ENV === 'production' ? '/api/' : 'http://localhost:3030/api/'
 
 export const httpService = {
-    get(endpoint, data) {
-        return ajax(endpoint, 'GET', data)
+    async get(endpoint) {
+        try {
+            const fullUrl = `${BASE_URL}${endpoint}`
+
+            const res = await fetch(fullUrl, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            })
+
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`)
+            }
+
+            const data = await res.json()
+            return data
+        } catch (err) {
+            console.error('Error in HTTP get:', err)
+            throw err
+        }
     },
-    post(endpoint, data) {
-        return ajax(endpoint, 'POST', data)
+
+    async post(endpoint, data) {
+        try {
+            const res = await fetch(`${BASE_URL}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(data),
+            })
+
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`)
+            }
+
+            return await res.json()
+        } catch (err) {
+            console.error('Error in HTTP post:', err)
+            throw err
+        }
     },
-    put(endpoint, data) {
-        return ajax(endpoint, 'PUT', data)
+
+    async put(endpoint, data) {
+        try {
+            const res = await fetch(`${BASE_URL}${endpoint}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(data),
+            })
+
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`)
+            }
+
+            return await res.json()
+        } catch (err) {
+            console.error('Error in HTTP put:', err)
+            throw err
+        }
     },
-    delete(endpoint, data) {
-        return ajax(endpoint, 'DELETE', data)
+
+    async delete(endpoint) {
+        try {
+            const res = await fetch(`${BASE_URL}${endpoint}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            })
+
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`)
+            }
+
+            return await res.json()
+        } catch (err) {
+            console.error('Error in HTTP delete:', err)
+            throw err
+        }
     },
 }
 
 async function ajax(endpoint, method = 'GET', data = null) {
-    const url = `${BASE_URL}${endpoint}`
-    const params = method === 'GET' ? data : null
-
-    // Retrieve ID token from localStorage
-    const loggedInUser = JSON.parse(localStorage.getItem('loggedinUser'))
-    const idToken = loggedInUser?.idToken
-
-    // Add Authorization header if ID token exists
-    const headers = {}
-    if (idToken) {
-        headers.Authorization = `Bearer ${idToken}`
-    }
-
-    const options = {
-        url,
-        method,
-        data,
-        params,
-        headers,
-    }
-
     try {
-        const res = await axios(options)
-        return res.data
+        const res = await fetch(`${BASE_URL}${endpoint}`, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                // Add authorization header if you have it
+                // 'Authorization': `Bearer ${yourAuthToken}`
+            },
+            body: method !== 'GET' ? JSON.stringify(data) : null,
+        })
+        const json = await res.json()
+        return json
     } catch (err) {
-        console.error(`Had issues ${method}ing to the backend, endpoint: ${endpoint}, with data: `, data)
-        console.dir(err)
-
-        // Handle unauthorized errors
-        if (err.response && err.response.status === 401) {
-            sessionStorage.clear()
-            window.location.assign('/')
-        }
-
+        console.error(`Had issues ${method}ing to server`, err)
         throw err
     }
 }

@@ -1,32 +1,47 @@
 <template>
     <div class="questions-admin">
-        <table>
-            <thead>
-                <tr>
-                    <th>{{ $t('table.question') }}</th>
-                    <th>{{ $t('table.answers') }}</th>
-                    <th>{{ $t('table.correctAnswer') }}</th>
-                    <th>{{ $t('table.actions') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(question, index) in questions" :key="index">
-                    <td>{{ question.text }}</td>
-                    <td>
-                        <ul>
-                            <li v-for="option in question.options" :key="option" :class="{ 'correct-answer': option === question.correctAnswer }">
-                                {{ option }}
-                            </li>
-                        </ul>
-                    </td>
-                    <td :class="{ 'correct-answer': question.correctAnswer }">{{ question.correctAnswer }}</td>
-                    <td>
-                        <button @click="editQuestion(question)" class="edit-button">{{ $t('actions.edit') }}</button>
-                        <button @click="deleteQuestion(question._id)" class="delete-button">{{ $t('actions.delete') }}</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- Add loading and error states -->
+        <div v-if="loading" class="loading">Loading questions...</div>
+        <div v-else-if="error" class="error">{{ error }}</div>
+        <div v-else>
+            <table v-if="displayQuestions.length">
+                <thead>
+                    <tr>
+                        <th>{{ $t('table.question') }}</th>
+                        <th>{{ $t('table.answers') }}</th>
+                        <th>{{ $t('table.correctAnswer') }}</th>
+                        <th>{{ $t('table.actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="question in displayQuestions" :key="question._id">
+                        <td>{{ question.text }}</td>
+                        <td>
+                            <ul>
+                                <li v-for="option in question.options" 
+                                    :key="option"
+                                    :class="{ 'correct-answer': option === question.correctAnswer }">
+                                    {{ option }}
+                                </li>
+                            </ul>
+                        </td>
+                        <td :class="{ 'correct-answer': true }">{{ question.correctAnswer }}</td>
+                        <td>
+                            <button @click="editQuestion(question)" class="edit-button">
+                                {{ $t('actions.edit') }}
+                            </button>
+                            <button @click="handleDelete(question._id)" class="delete-button">
+                                {{ $t('actions.delete') }}
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div v-else class="no-questions">
+                No questions available. Add some questions to get started.
+            </div>
+        </div>
+        
         <button @click="openAddModal" class="add-button">{{ $t('actions.addQuestion') }}</button>
 
         <!-- Add/Edit Question Modal -->
@@ -40,17 +55,27 @@
                     <label>{{ $t('table.options') }}</label>
                     <div v-for="(option, index) in newQuestion.options" :key="index" class="option-field">
                         <input v-model="newQuestion.options[index]" placeholder="Option" required />
-                        <button type="button" @click="removeOption(index)" class="delete-option-button">{{ $t('table.remove') }}</button>
+                        <button type="button" @click="removeOption(index)" class="delete-option-button">
+                            {{ $t('table.remove') }}
+                        </button>
                     </div>
-                    <button type="button" @click="addOption" class="add-option-button">{{ $t('table.addOption') }}</button>
+                    <button type="button" @click="addOption" class="add-option-button">
+                        {{ $t('table.addOption') }}
+                    </button>
 
                     <label>{{ $t('table.correctAnswer') }}</label>
                     <select v-model="newQuestion.correctAnswer" required>
-                        <option v-for="option in newQuestion.options" :key="option" :value="option">{{ option }}</option>
+                        <option v-for="option in newQuestion.options" :key="option" :value="option">
+                            {{ option }}
+                        </option>
                     </select>
 
-                    <button type="submit" class="save-button">{{ isEditMode ? $t('actions.update') : $t('actions.save') }}</button>
-                    <button type="button" @click="closeModal" class="cancel-button">{{ $t('actions.cancel') }}</button>
+                    <button type="submit" class="save-button">
+                        {{ isEditMode ? $t('actions.update') : $t('actions.save') }}
+                    </button>
+                    <button type="button" @click="closeModal" class="cancel-button">
+                        {{ $t('actions.cancel') }}
+                    </button>
                 </form>
             </div>
         </div>
@@ -58,7 +83,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex'
 
 export default {
     data() {
@@ -66,69 +91,86 @@ export default {
             newQuestion: this.$store.getters['questions/getEmptyQuestion'](),
             isEditMode: false,
             isModalOpen: false,
-            editQuestionId: null
-        };
+            editQuestionId: null,
+            loading: true, // Add loading state
+            error: null, // Add error state
+        }
     },
     computed: {
-        ...mapState('questions', ['questions'])
+        ...mapState('questions', ['questions']),
+        displayQuestions() {
+            // Add debug logging
+            return this.questions || []
+        },
     },
     methods: {
         ...mapActions('questions', ['loadQuestions', 'saveQuestion', 'deleteQuestion']),
 
         openAddModal() {
-            this.isEditMode = false;
-            this.newQuestion = this.$store.getters['questions/getEmptyQuestion']();
-            this.isModalOpen = true;
+            this.isEditMode = false
+            this.newQuestion = this.$store.getters['questions/getEmptyQuestion']()
+            this.isModalOpen = true
         },
         closeModal() {
-            this.isModalOpen = false;
-            this.resetForm();
+            this.isModalOpen = false
+            this.resetForm()
         },
         addOption() {
-            this.newQuestion.options.push('');
+            this.newQuestion.options.push('')
         },
         removeOption(index) {
-            this.newQuestion.options.splice(index, 1);
+            this.newQuestion.options.splice(index, 1)
         },
         async submitQuestion() {
-            if (this.isEditMode) {
-                this.newQuestion._id = this.editQuestionId;
+            try {
+                if (this.isEditMode) {
+                    this.newQuestion._id = this.editQuestionId
+                }
+                await this.saveQuestion(this.newQuestion)
+                this.closeModal()
+                await this.loadQuestions()
+            } catch (error) {
+                console.error('Error submitting question:', error)
+                // Handle error (maybe show to user)
             }
-            await this.saveQuestion(this.newQuestion); // Calls Vuex action saveQuestion
-            this.closeModal();
-            await this.loadQuestions();
         },
         editQuestion(question) {
-            this.newQuestion = { ...question };
-            this.isEditMode = true;
-            this.editQuestionId = question._id;
-            this.isModalOpen = true;
+            this.newQuestion = { ...question }
+            this.isEditMode = true
+            this.editQuestionId = question._id
+            this.isModalOpen = true
         },
-         async handleDelete(questionId) {
-            console.log('Deleting question with ID:', questionId);  // Debug log
+        async handleDelete(questionId) {
+            console.log('Deleting question with ID:', questionId) // Debug log
             try {
-                await this.deleteQuestion(questionId);
-                await this.loadQuestions();
+                await this.deleteQuestion(questionId)
+                await this.loadQuestions()
             } catch (error) {
-                console.error('Error deleting question:', error);
+                console.error('Error deleting question:', error)
             }
         },
         resetForm() {
-            this.newQuestion = this.$store.getters['questions/getEmptyQuestion']();
-            this.isEditMode = false;
-            this.editQuestionId = null;
-        }
+            this.newQuestion = this.$store.getters['questions/getEmptyQuestion']()
+            this.isEditMode = false
+            this.editQuestionId = null
+        },
     },
     async created() {
-        await this.loadQuestions();
-    }
-};
+        try {
+            this.loading = true
+            await this.loadQuestions()
+        } catch (error) {
+            console.error('Error loading questions:', error)
+            this.error = error.message
+        } finally {
+            this.loading = false
+        }
+    },
+}
 </script>
-
 
 <style lang="scss">
 .questions-admin {
-
     h2 {
         color: #2d2a6c;
         font-size: 1.5rem;
@@ -161,7 +203,8 @@ export default {
         margin-top: 1rem;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
-        th, td {
+        th,
+        td {
             padding: 0.75rem;
             text-align: center;
             border: 1px solid #ccc;
@@ -232,7 +275,9 @@ export default {
             }
         }
 
-        .add-option-button, .save-button, .cancel-button {
+        .add-option-button,
+        .save-button,
+        .cancel-button {
             background-color: #4c3777;
             color: #fff;
             border: none;

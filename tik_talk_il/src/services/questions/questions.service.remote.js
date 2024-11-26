@@ -1,34 +1,50 @@
-import { httpService } from '../http.service.js';
+import { httpService } from '../http.service.js'
 
 export const questionService = {
-    getQuestions,
-    getById,
-    save,
-    remove,
-};
+    async getQuestions() {
+        try {
+            const questions = await httpService.get('questions')
+            // Ensure each question has the correct structure
+            return questions.map((q) => ({
+                _id: q.id || q._id, // Handle both Firebase and MongoDB IDs
+                text: q.text,
+                options: q.options || [],
+                correctAnswer: q.correctAnswer,
+            }))
+        } catch (error) {
+            console.error('Error fetching questions:', error)
+            throw error
+        }
+    },
 
-// Fetch questions from the backend
-async function getQuestions() {
-    const response = await httpService.get('/api/questions');
-    return response;
-}
+    async getById(questionId) {
+        try {
+            return await httpService.get(`questions/${questionId}`)
+        } catch (error) {
+            console.error('Error fetching question by id:', error)
+            throw error
+        }
+    },
 
-// Fetch a specific question by ID from the backend
-async function getById(questionId) {
-    const response = await httpService.get(`/api/questions/${questionId}`);
-    return response;
-}
+    async save(question) {
+        try {
+            if (question._id) {
+                return await httpService.put(`questions/${question._id}`, question)
+            } else {
+                return await httpService.post('questions', question)
+            }
+        } catch (error) {
+            console.error('Error saving question:', error)
+            throw error
+        }
+    },
 
-// Save a question (add new or update existing) to the backend
-async function save(question) {
-    if (question._id) {
-        return await httpService.put(`/api/questions/${question._id}`, question);
-    } else {
-        return await httpService.post('/api/questions', question);
-    }
-}
-
-// Delete a question by ID from the backend
-async function remove(questionId) {
-    return await httpService.delete(`/api/questions/${questionId}`);
+    async remove(questionId) {
+        try {
+            return await httpService.delete(`questions/${questionId}`)
+        } catch (error) {
+            console.error('Error removing question:', error)
+            throw error
+        }
+    },
 }

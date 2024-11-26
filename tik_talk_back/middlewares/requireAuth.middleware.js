@@ -1,17 +1,19 @@
 import { firebaseAuth } from '../services/db/db.service.firebase.js'
 
 export async function requireAuth(req, res, next) {
-    const token = req.headers.authorization?.split('Bearer ')[1]
-    if (!token) return res.status(401).send({ err: 'Unauthorized' })
+    const authHeader = req.headers.authorization
+    if (!authHeader) {
+        return res.status(401).send('No authorization header')
+    }
 
     try {
-        const decodedToken = await firebaseAuth.verifyIdToken(token) // Verify token with Firebase
-        req.user = decodedToken // Attach user info to request object
-        console.log('Decoded Token:', decodedToken)
+        const token = authHeader.split(' ')[1]
+        const decodedToken = await admin.auth().verifyIdToken(token)
+        req.user = decodedToken
         next()
-    } catch (err) {
-        console.error('Failed to verify token:', err.message)
-        return res.status(401).send({ err: 'Unauthorized - Invalid Token' })
+    } catch (error) {
+        console.error('Auth error:', error)
+        res.status(401).send('Unauthorized')
     }
 }
 
