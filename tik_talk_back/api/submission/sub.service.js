@@ -11,22 +11,19 @@ export const submissionService = {
 
 // Fetch submissions based on type (adult or kids)
 async function query(type) {
-    const collectionName = type === 'adult' ? 'adults_data' : 'kids_data';
+    const collectionName = type === 'adult' ? 'adults_data' : 'kids_data'
     try {
-        if (process.env.DB_TYPE === 'firebase') {
-            const submissionsSnapshot = await dbService.collection(collectionName).get();
-            const submissions = [];
-            submissionsSnapshot.forEach((doc) => {
-                submissions.push({ id: doc.id, ...doc.data() });
-            });
-            return submissions;
-        } else if (process.env.DB_TYPE === 'mongo') {
-            const collection = await dbService.collection(collectionName);
-            return await collection.find({}).toArray();
-        }
+        logger.info(`Querying ${collectionName} collection`)
+        const submissionsSnapshot = await dbService.collection(collectionName).get()
+        const submissions = []
+        submissionsSnapshot.forEach(doc => {
+            submissions.push({ _id: doc.id, ...doc.data() })
+        })
+        logger.info(`Retrieved ${submissions.length} submissions from ${collectionName}`)
+        return submissions
     } catch (err) {
-        logger.error('Failed to find submissions', err);
-        throw err;
+        logger.error(`Failed to query ${collectionName}`, err)
+        throw err
     }
 }
 

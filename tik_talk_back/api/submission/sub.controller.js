@@ -9,7 +9,7 @@ export async function getSubmissions(req, res) {
         res.json(submissions)
     } catch (err) {
         logger.error('Failed to get submissions', err)
-        res.status(400).send({ err: 'Failed to get submissions' })
+        res.status(500).json({ error: 'Failed to get submissions' })
     }
 }
 

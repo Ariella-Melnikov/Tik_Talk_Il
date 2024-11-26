@@ -51,6 +51,7 @@ export default {
                 commit('setAdultSubmissions', submissions)
             } catch (err) {
                 console.error('Failed to load adult submissions:', err)
+                throw err
             }
         },
         async loadKidsSubmissions({ commit }) {
@@ -59,6 +60,7 @@ export default {
                 commit('setKidsSubmissions', submissions)
             } catch (err) {
                 console.error('Failed to load kids submissions:', err)
+                throw err
             }
         },
         async saveSubmission({ commit, state }, { submission, type }) {
@@ -114,12 +116,8 @@ export default {
     },
 
     getters: {
-        adultSubmissions(state) {
-            return state.adultSubmissions
-        },
-        kidsSubmissions(state) {
-            return state.kidsSubmissions
-        },
+        adultSubmissions: state => state.adultSubmissions,
+        kidsSubmissions: state => state.kidsSubmissions,
         getEmptySubmission: () => () => {
             return submissionService.getEmptySubmission()
         },

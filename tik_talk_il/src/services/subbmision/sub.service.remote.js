@@ -1,83 +1,70 @@
-import { remoteService } from '../remote.service.js'
 import { httpService } from '../http.service.js'
 
-
 export const submissionService = {
-    submitAdultForm,
-    submitKidsForm,
-    getAdultSubmissions,
-    getKidsSubmissions,
-    getSubmissions,
-    getById,
-    remove,
-    save,
-    addSubmissionManually,
-}
+    async getAdultSubmissions() {
+        try {
+            const response = await httpService.get('submissions/adult') // Note: plural 'submissions'
+            return response
+        } catch (error) {
+            console.error('Error fetching adult submissions:', error)
+            throw error
+        }
+    },
 
-// Submit adult form data
-async function submitAdultForm(formData) {
-    const response = await httpService.post('/api/submissions/adult', formData)
-    return response.data
-}
+    async getKidsSubmissions() {
+        try {
+            const response = await httpService.get('submissions/kids') // Note: plural 'submissions'
+            return response
+        } catch (error) {
+            console.error('Error fetching kids submissions:', error)
+            throw error
+        }
+    },
 
-// Submit kids form data
-async function submitKidsForm(formData) {
-    const response = await httpService.post('/api/submissions/kids', formData)
-    return response.data
-}
+    async getById(submissionId, type) {
+        try {
+            return await httpService.get(`submission/${type}/${submissionId}`)
+        } catch (error) {
+            console.error('Error fetching submission by id:', error)
+            throw error
+        }
+    },
 
-// Get all adult submissions from backend
-async function getAdultSubmissions() {
-    const response = await httpService.get('/api/submissions/adult')
-    return response.data
-}
+    async save(submission, type) {
+        try {
+            if (submission._id) {
+                return await httpService.put(`submission/${type}/${submission._id}`, submission)
+            } else {
+                return await httpService.post(`submission/${type}`, submission)
+            }
+        } catch (error) {
+            console.error('Error saving submission:', error)
+            throw error
+        }
+    },
 
-// Get all kids submissions from backend
-async function getKidsSubmissions() {
-    const response = await httpService.get('/api/submissions/kids')
-    return response.data
-}
+    async remove(submissionId, type) {
+        try {
+            return await httpService.delete(`submission/${type}/${submissionId}`)
+        } catch (error) {
+            console.error('Error removing submission:', error)
+            throw error
+        }
+    },
 
-// Get all submissions based on filter (for both adult and kids submissions)
-async function getSubmissions(filterBy = { term: '' }) {
-    const params = new URLSearchParams(filterBy).toString()
-    const response = await httpService.get(`/api/submissions?${params}`)
-    return response.data
+    async addSubmissionManually(submissionData, type) {
+        try {
+            const newSubmission = {
+                ...submissionData,
+                isSubscribe: false,
+                isRead: false,
+            }
+            const response = await httpService.post(`submission/${type}`, newSubmission)
+            console.log('Manually added submission:', response)
+            return response
+        } catch (error) {
+            console.error('Error adding submission manually:', error)
+            throw error
+        }
+    },
 }
-
-// Get a specific submission by ID and type
-async function getById(submissionId, type) {
-    const response = await httpService.get(`/api/submissions/${type}/${submissionId}`)
-    return response.data
-}
-
-// Remove a submission by ID and type
-async function remove(submissionId, type) {
-    const response = await httpService.delete(`/api/submissions/${type}/${submissionId}`)
-    return response.data
-}
-
-// Save a submission (add new or update existing)
-async function save(submission, type) {
-    let response
-    if (submission._id) {
-        // Update existing submission
-        response = await httpService.put(`/api/submissions/${type}/${submission._id}`, submission)
-    } else {
-        // Add new submission
-        response = await httpService.post(`/api/submissions/${type}`, submission)
-    }
-    return response.data
-}
-
-// Manually add a new submission (simulate adding without form submission)
-async function addSubmissionManually(submissionData, type) {
-    const newSubmission = {
-        ...submissionData,
-        isSubscribe: false,
-        isRead: false,
-    }
-    const response = await httpService.post(`/api/submissions/${type}`, newSubmission)
-    return response.data
-}
-

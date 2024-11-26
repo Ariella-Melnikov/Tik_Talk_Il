@@ -36,6 +36,15 @@ if (process.env.NODE_ENV === 'production') {
     }
     app.use(cors(corsOptions))
 }
+// Add error handling for CORS
+app.use((err, req, res, next) => {
+    if (err.name === 'CORSError') {
+        res.status(403).json({ error: 'CORS error', message: err.message })
+    } else {
+        next(err)
+    }
+})
+
 // app.all('*', setupAsyncLocalStorage)
 
 app.use('/api/auth', authRoutes)
@@ -46,7 +55,6 @@ app.use('/api/questions', questionRoutes)
 // app.use('/api/review', reviewRoutes)
 
 // setupSocketAPI(server)
-
 
 app.get('/**', (req, res) => {
     res.sendFile(path.resolve('public/index.html'))
