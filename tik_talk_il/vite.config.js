@@ -6,16 +6,14 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueDevTools(),
-  ],
-  build: {
-    outDir: '../tik_talk_back/public' 
-},
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
+    plugins: [vue(), vueDevTools()],
+    build: {
+        outDir: '../tik_talk_back/public',
+    },
+    envDir: '.',
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url)),
+        },
+    },
 })

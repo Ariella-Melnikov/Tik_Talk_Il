@@ -8,23 +8,50 @@ export const authService = {
 }
 
 async function login(credentials) {
-    const response = await httpService.post('auth/login', credentials)
+    try {
+        const response = await httpService.post('auth/login', {
+            email: credentials.email,
+            password: credentials.password
+        })
+        
+        // Check if response contains required data
+        if (!response.user || !response.idToken) {
+            throw new Error('Invalid server response')
+        }
 
-    // Store the user and ID token in localStorage
-    const { user, idToken } = response
-    const loggedInUser = { ...user, idToken }
-    localStorage.setItem('loggedinUser', JSON.stringify(loggedInUser))
-    return loggedInUser
+        // Store the user and token
+        const loggedInUser = { user: response.user, idToken: response.idToken }
+        localStorage.setItem('loggedinUser', JSON.stringify(loggedInUser))
+        return loggedInUser
+    } catch (error) {
+        console.error('Login error:', error)
+        throw error
+    }
 }
 
-async function signup(user) {
-    const response = await httpService.post('auth/signup', user)
+async function signup(credentials) {
+    try {
+        const response = await httpService.post('auth/signup', {
+            email: credentials.email,
+            password: credentials.password,
+            fullname: credentials.fullname,
+            phone: credentials.phone,
+            courseType: credentials.courseType
+        })
 
-    // Store the user and ID token in localStorage
-    const { user: newUser, idToken } = response
-    const loggedInUser = { ...newUser, idToken }
-    localStorage.setItem('loggedinUser', JSON.stringify(loggedInUser))
-    return loggedInUser
+        // Check if response contains required data
+        if (!response.user || !response.idToken) {
+            throw new Error('Invalid server response')
+        }
+
+        // Store the user and token
+        const loggedInUser = { user: response.user, idToken: response.idToken }
+        localStorage.setItem('loggedinUser', JSON.stringify(loggedInUser))
+        return loggedInUser
+    } catch (error) {
+        console.error('Signup error:', error)
+        throw error
+    }
 }
 
 function getLoggedInUser() {

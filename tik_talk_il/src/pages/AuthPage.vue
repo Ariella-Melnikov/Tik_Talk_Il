@@ -59,23 +59,30 @@ export default {
         async submitForm() {
             try {
                 if (this.isLogin) {
-                    const loggedInUser = await this.login(this.credentials)
+                    const { user, idToken } = await this.login(this.credentials)
 
-                    // Ensure user object and idToken exist in the response
-                    if (!loggedInUser?.user || !loggedInUser?.idToken) {
+                    // Check if login was successful
+                    if (!user || !idToken) {
                         throw new Error('Invalid login response')
                     }
 
-                    // Use `loggedInUser.user.isAdmin` for redirection
-                    this.$router.push(loggedInUser.user.isAdmin ? '/admin' : '/user')
+                    // Redirect based on user role
+                    this.$router.push(user.isAdmin ? '/admin' : '/user')
                 } else {
-                    await this.signup(this.credentials)
+                    const result = await this.signup(this.credentials)
                     alert('Signup successful! Please log in.')
-                    this.toggleMode()
+                    this.isLogin = true
+                    this.credentials = {
+                        email: '',
+                        password: '',
+                        fullname: '',
+                        phone: '',
+                        courseType: 'General English',
+                    }
                 }
             } catch (err) {
-                console.error('Authentication failed:', err.message)
-                alert('Failed to authenticate. Please check your credentials.')
+                console.error('Authentication failed:', err)
+                alert(err.message || 'Failed to authenticate. Please check your credentials.')
             }
         },
     },
