@@ -2,10 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../pages/HomeView.vue'
 import AdminPage from '../pages/AdminPage.vue'
 import AuthPage from '../pages/AuthPage.vue'
-import Kids from '../pages/Kids.vue'; 
-import Women from '../pages/Women.vue'; 
-import Business from '../pages/Business.vue'; 
-import UserPage from '../pages/UserPage.vue';
+import Kids from '../pages/Kids.vue'
+import Women from '../pages/women.vue'
+import Business from '../pages/business.vue'
+import UserPage from '../pages/UserPage.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,23 +36,31 @@ const router = createRouter({
         {
             path: '/kids',
             name: 'Kids',
-            component: Kids, 
+            component: Kids,
         },
         {
             path: '/women',
             name: 'Women',
-            component: Women, 
+            component: Women,
         },
         {
             path: '/business',
             name: 'Business',
-            component: Business, 
+            component: Business,
         },
         {
             path: '/user/:id',
             name: 'UserPage',
             component: UserPage,
-          },
+            props: true,
+            beforeEnter: (to, from, next) => {
+                if (!to.params.id) {
+                    next('/')
+                } else {
+                    next()
+                }
+            },
+        },
     ],
 })
 

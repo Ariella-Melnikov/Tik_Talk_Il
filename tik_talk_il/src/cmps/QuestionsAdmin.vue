@@ -18,7 +18,8 @@
                         <td>{{ question.text }}</td>
                         <td>
                             <ul>
-                                <li v-for="option in question.options" 
+                                <li
+                                    v-for="option in question.options"
                                     :key="option"
                                     :class="{ 'correct-answer': option === question.correctAnswer }">
                                     {{ option }}
@@ -37,11 +38,9 @@
                     </tr>
                 </tbody>
             </table>
-            <div v-else class="no-questions">
-                No questions available. Add some questions to get started.
-            </div>
+            <div v-else class="no-questions">No questions available. Add some questions to get started.</div>
         </div>
-        
+
         <button @click="openAddModal" class="add-button">{{ $t('actions.addQuestion') }}</button>
 
         <!-- Add/Edit Question Modal -->
@@ -123,15 +122,22 @@ export default {
         },
         async submitQuestion() {
             try {
-                if (this.isEditMode) {
-                    this.newQuestion._id = this.editQuestionId
+                const questionToSave = {
+                    _id: this.isEditMode ? this.editQuestionId : undefined,
+                    text: this.newQuestion.text,
+                    options: this.newQuestion.options,
+                    correctAnswer: this.newQuestion.correctAnswer,
                 }
-                await this.saveQuestion(this.newQuestion)
+
+                console.log('Submitting question:', questionToSave)
+
+                await this.saveQuestion(questionToSave)
                 this.closeModal()
                 await this.loadQuestions()
             } catch (error) {
                 console.error('Error submitting question:', error)
-                // Handle error (maybe show to user)
+                // Show error to user
+                alert(`Failed to save question: ${error.message}`)
             }
         },
         editQuestion(question) {

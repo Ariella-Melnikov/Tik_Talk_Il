@@ -9,7 +9,9 @@
             <RouterLink to="/women" class="router-link">{{ $t('header.womenClasses') }}</RouterLink>
             <RouterLink to="/business" class="router-link">{{ $t('header.businessClasses') }}</RouterLink>
             <RouterLink v-if="isAdmin" to="/admin" class="router-link">{{ $t('header.admin') }}</RouterLink>
-            <RouterLink v-else-if="isLoggedIn" to="/user" class="router-link">{{ $t('header.user') }}</RouterLink>
+            <RouterLink v-else-if="isLoggedIn && user?._id" :to="`/user/${user._id}`" class="router-link">{{
+                user.fullName || $t('header.user')
+            }}</RouterLink>
             <RouterLink v-else to="/auth" class="router-link">{{ $t('header.login') }}</RouterLink>
 
             <button v-if="isLoggedIn" @click="logout" class="router-link logout-button">
@@ -23,7 +25,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import whiteLogo from '@/assets/img/logo/tik_talk_logo_white.png'
 import emptyLogo from '@/assets/img/logo/tik_talk_logo_empty.png'
 
@@ -38,9 +40,9 @@ export default {
         isAboutPage() {
             return this.$route.path === '/about'
         },
-        ...mapGetters('users', ['user']),
+        ...mapState('users', ['user']),
         isLoggedIn() {
-            return !!this.user
+            return !!this.user?._id
         },
         isAdmin() {
             return this.user?.isAdmin || false

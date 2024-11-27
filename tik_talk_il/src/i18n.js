@@ -8,12 +8,23 @@ const messages = {
         home: 'Home',
         about: 'About',
         admin: 'Admin',
+        user: "User Profile",
         login: 'Login',
         logout: 'Logout',
         questionsManagement: 'Questions Management',
         kidsClasses: 'English for kids',
         womenClasses: 'English for women',
         businessClasses: 'English for bussiness',
+    },
+    user:{
+      profile: {
+        email: 'Email',
+        phone: 'Phone',
+        courseType: 'Course Type',
+        sessions: 'Session Dates',
+        completed: 'Completed',
+        upcoming: 'Upcoming',
+      }
     },
     home: {
         heading:  `
@@ -128,12 +139,23 @@ const messages = {
         home: 'בית',
         about: 'אודות',
         admin: 'מנהל אתר',
+        user: "פרופיל משתמש",
         login: 'התחבר',
         logout: 'התנתק',
         questionsManagement: 'ניהול שאלות',
         kidsClasses: 'אמגלית לילדים',
         womenClasses: 'אמגלית לנשים',
         businessClasses: 'אנגלית עסקית',
+    },
+    user:{
+      profile: {
+        email: 'אימייל',
+        phone: 'טלפון',
+        courseType: 'סוג הקורס',
+        sessions: 'תאריכי השיעורים',
+        completed: 'הושלם',
+        upcoming: 'בעתיד',
+      }
     },
     home: {
         heading: ` 

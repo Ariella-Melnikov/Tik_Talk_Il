@@ -59,15 +59,21 @@ export default {
         async submitForm() {
             try {
                 if (this.isLogin) {
-                    const { user, idToken } = await this.login(this.credentials)
+                    const response = await this.login(this.credentials)
 
-                    // Check if login was successful
-                    if (!user || !idToken) {
+                    if (response?.user) {
+                        const userId = response.user.uid || response.user._id
+
+                        if (response.user.isAdmin) {
+                            await this.$router.push('/admin')
+                        } else if (userId) {
+                            await this.$router.push(`/user/${userId}`)
+                        } else {
+                            throw new Error('No user ID found')
+                        }
+                    } else {
                         throw new Error('Invalid login response')
                     }
-
-                    // Redirect based on user role
-                    this.$router.push(user.isAdmin ? '/admin' : '/user')
                 } else {
                     const result = await this.signup(this.credentials)
                     alert('Signup successful! Please log in.')
@@ -81,8 +87,8 @@ export default {
                     }
                 }
             } catch (err) {
-                console.error('Authentication failed:', err)
-                alert(err.message || 'Failed to authenticate. Please check your credentials.')
+                console.error('Authentication error:', err)
+                alert(err.message || 'Failed to authenticate')
             }
         },
     },
