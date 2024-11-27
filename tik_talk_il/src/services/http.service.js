@@ -4,93 +4,16 @@ const BASE_URL = process.env.NODE_ENV === 'production' ? '/api/' : 'http://local
 
 export const httpService = {
     async get(endpoint) {
-        try {
-            const fullUrl = `${BASE_URL}${endpoint}`
-
-            const res = await fetch(fullUrl, {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            })
-
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`)
-            }
-
-            const data = await res.json()
-            return data
-        } catch (err) {
-            console.error('Error in HTTP get:', err)
-            throw err
-        }
+        return ajax(endpoint)
     },
-
     async post(endpoint, data) {
-        try {
-            const res = await fetch(`${BASE_URL}${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(data),
-            })
-
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`)
-            }
-
-            return await res.json()
-        } catch (err) {
-            console.error('Error in HTTP post:', err)
-            throw err
-        }
+        return ajax(endpoint, 'POST', data)
     },
-
     async put(endpoint, data) {
-        try {
-            const res = await fetch(`${BASE_URL}${endpoint}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(data),
-            })
-
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`)
-            }
-
-            return await res.json()
-        } catch (err) {
-            console.error('Error in HTTP put:', err)
-            throw err
-        }
+        return ajax(endpoint, 'PUT', data)
     },
-
     async delete(endpoint) {
-        try {
-            const res = await fetch(`${BASE_URL}${endpoint}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            })
-
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`)
-            }
-
-            return await res.json()
-        } catch (err) {
-            console.error('Error in HTTP delete:', err)
-            throw err
-        }
+        return ajax(endpoint, 'DELETE')
     },
 }
 
@@ -100,15 +23,25 @@ async function ajax(endpoint, method = 'GET', data = null) {
             method,
             headers: {
                 'Content-Type': 'application/json',
-                // Add authorization header if you have it
-                // 'Authorization': `Bearer ${yourAuthToken}`
+                // Add auth token if exists
+                ...(sessionStorage.getItem('authToken') && {
+                    Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+                }),
             },
-            body: method !== 'GET' ? JSON.stringify(data) : null,
+            credentials: 'include', // Important for cookies
+            ...(data && { body: JSON.stringify(data) }),
         })
-        const json = await res.json()
-        return json
+
+        if (!res.ok) {
+            const errorText = await res.text()
+            console.error('Server error response:', errorText)
+            throw new Error(`HTTP error! status: ${res.status}`)
+        }
+
+        const responseData = await res.json()
+        return responseData
     } catch (err) {
-        console.error(`Had issues ${method}ing to server`, err)
+        console.error(`Error in HTTP ${method}:`, err)
         throw err
     }
 }

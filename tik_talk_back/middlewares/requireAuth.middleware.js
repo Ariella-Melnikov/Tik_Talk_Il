@@ -1,4 +1,6 @@
 import { firebaseAuth } from '../services/db/db.service.firebase.js'
+import { asyncLocalStorage } from '../services/als.service.js' 
+
 
 export async function requireAuth(req, res, next) {
     const authHeader = req.headers.authorization

@@ -6,8 +6,8 @@ const router = express.Router()
 
 router.get('/', getQuestions) 
 router.get('/:id', getQuestionById) 
-router.post('/', requireAdmin, requireAuth, addQuestion)
-router.put('/:id', requireAdmin, requireAuth,updateQuestion) 
-router.delete('/:id',requireAuth, requireAdmin, deleteQuestion) 
+router.post('/',  addQuestion)
+router.put('/:id', updateQuestion) 
+router.delete('/:id', deleteQuestion) 
 
 export const questionRoutes = router

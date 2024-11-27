@@ -35,13 +35,34 @@ export async function addQuestion(req, res) {
 
 export async function updateQuestion(req, res) {
     try {
-        const { id } = req.params;
-        const question = req.body;
-        const updatedQuestion = await questionService.update(id, question);
-        res.json(updatedQuestion);
+        const { id } = req.params
+        const question = req.body
+        
+        console.log('Updating question:', { id, question })
+        
+        // Validate the question data
+        if (!question.text || !Array.isArray(question.options) || !question.correctAnswer) {
+            console.error('Invalid question data:', question)
+            return res.status(400).json({ 
+                error: 'Invalid question data',
+                details: {
+                    hasText: !!question.text,
+                    hasOptions: Array.isArray(question.options),
+                    hasCorrectAnswer: !!question.correctAnswer
+                }
+            })
+        }
+
+        const updatedQuestion = await questionService.update(id, question)
+        console.log('Question updated successfully:', updatedQuestion)
+        
+        res.json(updatedQuestion)
     } catch (err) {
-        logger.error('Failed to update question', err);
-        res.status(500).send({ err: 'Failed to update question' });
+        console.error('Failed to update question:', err)
+        res.status(500).json({ 
+            error: 'Failed to update question',
+            details: err.message 
+        })
     }
 }
 

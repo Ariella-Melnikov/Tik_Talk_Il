@@ -66,22 +66,33 @@ async function add(question) {
 // Update an existing question
 async function update(id, question) {
     try {
-        const collection = dbService.collection('questions');
+        console.log('Updating question in service:', { id, question })
+        
+        const collection = dbService.collection('questions')
+        
+        // Prepare the update data
+        const updateData = {
+            text: question.text,
+            options: question.options,
+            correctAnswer: question.correctAnswer,
+            updatedAt: new Date()
+        }
+
         if (process.env.DB_TYPE === 'firebase') {
-            const docRef = collection.doc(id);
-            await docRef.update(question);
-            return { id, ...question };
+            const docRef = collection.doc(id)
+            await docRef.update(updateData)
+            return { id, ...updateData }
         } else if (process.env.DB_TYPE === 'mongo') {
-            const result = await collection.updateOne(
+            const result = await collection.findOneAndUpdate(
                 { _id: new ObjectId(id) },
-                { $set: question }
-            );
-            if (result.matchedCount === 0) throw new Error('Failed to update question');
-            return { id, ...question };
+                { $set: updateData },
+                { returnDocument: 'after' }
+            )
+            return result.value
         }
     } catch (err) {
-        logger.error('Failed to update question', err);
-        throw err;
+        console.error('Failed to update question in service:', err)
+        throw err
     }
 }
 

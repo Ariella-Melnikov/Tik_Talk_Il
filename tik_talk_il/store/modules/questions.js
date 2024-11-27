@@ -32,11 +32,19 @@ export default {
         },
         async saveQuestion({ commit }, question) {
             try {
-                const savedQuestion = await questionService.save(question);
-                if (!question._id) commit('addQuestion', savedQuestion);
-                else commit('updateQuestion', savedQuestion);
+                console.log('Saving question in Vuex:', question)
+                const savedQuestion = await questionService.save(question)
+                
+                if (question._id) {
+                    commit('updateQuestion', savedQuestion)
+                } else {
+                    commit('addQuestion', savedQuestion)
+                }
+                
+                return savedQuestion
             } catch (err) {
-                console.error('Failed to save question:', err);
+                console.error('Failed to save question:', err)
+                throw err
             }
         },
         async deleteQuestion({ commit }, questionId) {
