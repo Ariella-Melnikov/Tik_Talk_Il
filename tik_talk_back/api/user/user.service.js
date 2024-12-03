@@ -2,6 +2,7 @@ import { dbService } from '../../services/db/index.js';
 import { logger } from '../../services/logger.service.js'
 import { reviewService } from '../review/review.service.js'
 import { ObjectId } from 'mongodb'
+import { firebaseService, COLLECTIONS } from '../../services/db/db.service.firebase.js'
 
 export const userService = {
     add, 
@@ -9,21 +10,14 @@ export const userService = {
     update, 
     remove, 
     query, 
-    getByEmail, 
+    getByEmail,
+    updateCredits, 
 }
 
 async function query(filterBy = {}) {
     try {
         if (process.env.DB_TYPE === 'firebase') {
-            const usersSnapshot = await dbService.collection('users').get();
-            const users = [];
-            usersSnapshot.forEach((doc) => {
-                const user = doc.data();
-                delete user.password; // Remove sensitive data
-                user.id = doc.id;
-                users.push(user);
-            });
-            return users;
+            return await firebaseService.query(COLLECTIONS.USERS, filterBy)
         } else if (process.env.DB_TYPE === 'mongo') {
             const collection = await dbService.collection('users');
             const cursor = await collection.find(_buildCriteria(filterBy));
@@ -38,11 +32,7 @@ async function query(filterBy = {}) {
 async function getById(userId) {
     try {
         if (process.env.DB_TYPE === 'firebase') {
-            const userDoc = await dbService.collection('users').doc(userId).get();
-            if (!userDoc.exists) throw new Error('User not found');
-            const user = userDoc.data();
-            delete user.password; // Remove sensitive data
-            return { id: userDoc.id, ...user };
+            return await firebaseService.getById(COLLECTIONS.USERS, userId)
         } else if (process.env.DB_TYPE === 'mongo') {
             const collection = await dbService.collection('users');
             const user = await collection.findOne({ _id: new ObjectId(userId) });
@@ -80,66 +70,66 @@ async function getByEmail(email) {
 
 async function remove(userId) {
     try {
+        if (!userId) throw new Error('Missing userId')
+
         if (process.env.DB_TYPE === 'firebase') {
-            const userRef = dbService.collection('users').doc(userId);
-            await userRef.delete();
+            await firebaseService.remove(COLLECTIONS.USERS, userId)
+            return userId
         } else if (process.env.DB_TYPE === 'mongo') {
-            const collection = await dbService.collection('users');
-            await collection.deleteOne({ _id: new ObjectId(userId) });
+            const collection = await dbService.collection('users')
+            await collection.deleteOne({ _id: new ObjectId(userId) })
+            return userId
         }
     } catch (err) {
-        logger.error(`Cannot remove user ${userId}`, err);
-        throw err;
+        logger.error(`Cannot remove user ${userId}`, err)
+        throw err
     }
 }
 
 async function update(userId, user) {
     try {
-        if (!userId) throw new Error('Missing userId');
+        if (!userId) throw new Error('Missing userId')
 
         // Define allowed fields for updating
-        const allowedFields = ['fullname', 'email', 'phone', 'courseType', 'sessionCredits', 'imgUrl'];
+        const allowedFields = ['fullname', 'email', 'phone', 'courseType', 'sessionCredits', 'imgUrl']
 
         if (process.env.DB_TYPE === 'firebase') {
-            const userRef = dbService.collection('users').doc(userId);
-            const userDoc = await userRef.get();
-
-            if (!userDoc.exists) throw new Error(`User with ID ${userId} not found`);
-            const existingUser = userDoc.data();
+            // Get existing user to merge with updates
+            const existingUser = await firebaseService.getById(COLLECTIONS.USERS, userId)
+            if (!existingUser) throw new Error(`User with ID ${userId} not found`)
 
             // Prepare fields to update
             const userToUpdate = allowedFields.reduce((acc, field) => {
-                acc[field] = user[field] || existingUser[field];
-                return acc;
-            }, {});
+                if (user[field] !== undefined) acc[field] = user[field]
+                return acc
+            }, {})
 
-            await userRef.update(userToUpdate);
-            return { id: userId, ...existingUser, ...userToUpdate };
+            return await firebaseService.update(COLLECTIONS.USERS, userId, userToUpdate)
 
         } else if (process.env.DB_TYPE === 'mongo') {
-            const collection = await dbService.collection('users');
-            const existingUser = await collection.findOne({ _id: new ObjectId(userId) });
+            const collection = await dbService.collection('users')
+            const existingUser = await collection.findOne({ _id: new ObjectId(userId) })
 
-            if (!existingUser) throw new Error(`User with ID ${userId} not found`);
+            if (!existingUser) throw new Error(`User with ID ${userId} not found`)
 
             // Prepare fields to update
             const userToUpdate = allowedFields.reduce((acc, field) => {
-                acc[field] = user[field] || existingUser[field];
-                return acc;
-            }, {});
+                if (user[field] !== undefined) acc[field] = user[field]
+                return acc
+            }, {})
 
             const result = await collection.updateOne(
                 { _id: new ObjectId(userId) },
                 { $set: userToUpdate }
-            );
+            )
 
-            if (result.matchedCount === 0) throw new Error(`Failed to update user with ID ${userId}`);
+            if (result.matchedCount === 0) throw new Error(`Failed to update user with ID ${userId}`)
 
-            return { ...existingUser, ...userToUpdate, _id: userId };
+            return { ...existingUser, ...userToUpdate, _id: userId }
         }
     } catch (err) {
-        logger.error(`Cannot update user ${userId}`, err);
-        throw err;
+        logger.error(`Cannot update user ${userId}`, err)
+        throw err
     }
 }
 
@@ -151,7 +141,7 @@ async function add(user) {
             fullname: user.fullname,
             email: user.email,
             phone: user.phone,
-            courseType: user.courseType || 'General',
+            courseType: user.courseType || CourseType.GENERAL,
             sessions: [],
             sessionCredits: user.sessionCredits || 0,
             imgUrl: user.imgUrl || '',
@@ -166,8 +156,7 @@ async function add(user) {
 
         // Add user to the database
         if (process.env.DB_TYPE === 'firebase') {
-            const userRef = await dbService.collection('users').add(userToAdd);
-            return { id: userRef.id, ...userToAdd };
+            return await firebaseService.add(COLLECTIONS.USERS, userToAdd)
         } else if (process.env.DB_TYPE === 'mongo') {
             const collection = await dbService.collection('users');
             const result = await collection.insertOne(userToAdd);
@@ -192,3 +181,17 @@ function _buildCriteria(filterBy) {
     }
     return criteria;
 }
+
+
+async function updateCredits(userId, credits) {
+    try {
+      const collection = await dbService.getCollection('users');
+      await collection.updateOne(
+        { _id: ObjectId(userId) },
+        { $inc: { sessionCredits: credits } }
+      );
+    } catch (err) {
+      logger.error('Cannot update user credits', err);
+      throw err;
+    }
+  }

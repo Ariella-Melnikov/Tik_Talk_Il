@@ -21,6 +21,8 @@ async function ajax(endpoint, method = 'GET', data = null) {
     try {
         const res = await fetch(`${BASE_URL}${endpoint}`, {
             method,
+            data,
+            withCredentials: true,
             headers: {
                 'Content-Type': 'application/json',
                 // Add auth token if exists

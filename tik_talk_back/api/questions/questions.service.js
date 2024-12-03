@@ -1,4 +1,4 @@
-import { dbService } from '../../services/db/index.js';
+import { firebaseService, COLLECTIONS } from '../../services/db/db.service.firebase.js';
 import { logger } from '../../services/logger.service.js';
 
 export const questionService = {
@@ -12,15 +12,10 @@ export const questionService = {
 // Fetch all questions
 async function query() {
     try {
-        const collection = dbService.collection('questions');
         if (process.env.DB_TYPE === 'firebase') {
-            const snapshot = await collection.get();
-            const questions = [];
-            snapshot.forEach((doc) => {
-                questions.push({ id: doc.id, ...doc.data() });
-            });
-            return questions;
+            return await firebaseService.query(COLLECTIONS.QUESTIONS);
         } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('questions');
             return await collection.find({}).toArray();
         }
     } catch (err) {
@@ -32,12 +27,10 @@ async function query() {
 // Fetch a specific question by ID
 async function getById(id) {
     try {
-        const collection = dbService.collection('questions');
         if (process.env.DB_TYPE === 'firebase') {
-            const doc = await collection.doc(id).get();
-            if (!doc.exists) throw new Error('Question not found');
-            return { id: doc.id, ...doc.data() };
+            return await firebaseService.getById(COLLECTIONS.QUESTIONS, id);
         } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('questions');
             return await collection.findOne({ _id: new ObjectId(id) });
         }
     } catch (err) {
@@ -49,11 +42,10 @@ async function getById(id) {
 // Add a new question
 async function add(question) {
     try {
-        const collection = dbService.collection('questions');
         if (process.env.DB_TYPE === 'firebase') {
-            const docRef = await collection.add(question);
-            return { id: docRef.id, ...question };
+            return await firebaseService.add(COLLECTIONS.QUESTIONS, question);
         } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('questions');
             const result = await collection.insertOne(question);
             return { ...question, _id: result.insertedId };
         }
@@ -66,44 +58,37 @@ async function add(question) {
 // Update an existing question
 async function update(id, question) {
     try {
-        console.log('Updating question in service:', { id, question })
-        
-        const collection = dbService.collection('questions')
-        
-        // Prepare the update data
         const updateData = {
             text: question.text,
             options: question.options,
             correctAnswer: question.correctAnswer,
             updatedAt: new Date()
-        }
+        };
 
         if (process.env.DB_TYPE === 'firebase') {
-            const docRef = collection.doc(id)
-            await docRef.update(updateData)
-            return { id, ...updateData }
+            return await firebaseService.update(COLLECTIONS.QUESTIONS, id, updateData);
         } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('questions');
             const result = await collection.findOneAndUpdate(
                 { _id: new ObjectId(id) },
                 { $set: updateData },
                 { returnDocument: 'after' }
-            )
-            return result.value
+            );
+            return result.value;
         }
     } catch (err) {
-        console.error('Failed to update question in service:', err)
-        throw err
+        logger.error('Failed to update question', err);
+        throw err;
     }
 }
 
 // Delete a question
 async function remove(id) {
     try {
-        const collection = dbService.collection('questions');
         if (process.env.DB_TYPE === 'firebase') {
-            const docRef = collection.doc(id);
-            await docRef.delete();
+            await firebaseService.remove(COLLECTIONS.QUESTIONS, id);
         } else if (process.env.DB_TYPE === 'mongo') {
+            const collection = await dbService.collection('questions');
             await collection.deleteOne({ _id: new ObjectId(id) });
         }
     } catch (err) {
