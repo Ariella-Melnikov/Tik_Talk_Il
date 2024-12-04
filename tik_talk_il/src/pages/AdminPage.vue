@@ -10,6 +10,7 @@
         <h2>{{ $t('header.questionsManagement') }}</h2>
         
         <QuestionsAdmin />
+        <SessionsAdmin />
 
 
     </section>
@@ -21,13 +22,16 @@ import EditSubmissions from '@/cmps/EditSubmissions.vue';
 import QuestionsAdmin from '@/cmps/QuestionsAdmin.vue';
 import AdultSubmissionsTable from '@/cmps/AdultSubmissionsTable.vue';
 import KidsSubmissionsTable from '@/cmps/KidsSubmissionsTable.vue';
+import SessionsAdmin from '@/cmps/SessionsAdmin.vue';
 
 export default {
     components: {
         EditSubmissions,
         QuestionsAdmin,
         AdultSubmissionsTable,
-        KidsSubmissionsTable
+        KidsSubmissionsTable,
+        SessionsAdmin
+
     },
     data() {
         return {

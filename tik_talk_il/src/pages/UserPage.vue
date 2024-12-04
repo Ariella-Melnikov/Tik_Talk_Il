@@ -23,25 +23,32 @@
         <div v-else class="loading">
             {{ $t('common.loading') }}
         </div>
+        <div>
+            <SessionUser />
+        </div>
     </section>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import SessionUser from '@/cmps/SessionUser.vue'
 
 export default {
+  components: {
+    SessionUser
+  },
     name: 'UserPage',
     data() {
         return {
             loading: true,
-            error: null
+            error: null,
         }
     },
     computed: {
         ...mapState('users', ['user']),
         userId() {
             return this.$route.params.id
-        }
+        },
     },
     methods: {
         ...mapActions('user', ['loadUser']),
@@ -49,7 +56,7 @@ export default {
     async created() {
         try {
             this.loading = true
-            
+
             if (!this.userId) {
                 console.error('No user ID in route params')
                 this.$router.push('/')
@@ -58,7 +65,7 @@ export default {
 
             console.log('Loading user with ID:', this.userId)
             await this.loadUser(this.userId)
-            
+
             if (!this.user?._id) {
                 throw new Error('User not found')
             }
@@ -68,7 +75,7 @@ export default {
         } finally {
             this.loading = false
         }
-    }
+    },
 }
 </script>
 

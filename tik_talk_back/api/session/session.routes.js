@@ -1,19 +1,45 @@
 import express from 'express';
-import { addSession, getSessions, deleteSession, updateSession } from './session.controller.js';
-import { requireAuth} from '../../middlewares/requireAuth.middleware.js';
+import { requireAuth, requireAdmin } from '../../middlewares/requireAuth.middleware.js';
+import { 
+    // Course controllers
+    createCourse,
+    updateCourseDetails,
+    updateCourseStatus,
+    getCourse,
+    getAllCourses,
+    
+    // Class controllers
+    createClass,
+    updateClassDetails,
+    updateClassCapacity,
+    updateClassStatus,
+    getClass,
+    getClassesByCourse,
+    
+    // Registration controllers
+    registerToClass,
+    unregisterFromClass
+} from './session.controller.js';
 
 const router = express.Router();
 
-// Add a new session for a user
-router.post('/user/', requireAuth, addSession);
+// Course routes (Admin only)
+router.post('/course',  createCourse);
+router.put('/course/:courseId',  updateCourseDetails);
+router.put('/course/:courseId/status',  updateCourseStatus);
+router.get('/course/:courseId',  getCourse);
+router.get('/course',  getAllCourses);
 
-// Get all sessions for a specific user
-router.get('/user/:userId', requireAuth, getSessions);
+// Class routes
+router.post('/course/:courseId/class',   createClass);
+router.put('/class/:classId',   updateClassDetails);
+router.put('/class/:classId/capacity',   updateClassCapacity);
+router.put('/class/:classId/status',   updateClassStatus);
+router.get('/class/:classId',  getClass);
+router.get('/course/:courseId/classes',  getClassesByCourse);
 
-// Update a session by session ID
-router.put('/:sessionId', requireAuth, updateSession);
-
-// Delete a session by session ID
-router.delete('/:sessionId', requireAuth, deleteSession);
+// Registration routes
+router.post('/class/:classId/register',  registerToClass);
+router.delete('/class/:classId/register',  unregisterFromClass);
 
 export const sessionRoutes = router;
